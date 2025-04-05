@@ -1,0 +1,8 @@
+add_executable(testEfficientLinearList testEfficientLinearList.cpp)
+target_link_libraries(testEfficientLinearList)
+
+# add_executable(testPureParitySeeking-23RedBlackBinaryTree testPureParitySeeking-23RedBlackBinaryTree.cpp)
+# target_link_libraries(testPureParitySeeking-23RedBlackBinaryTree)
+
+add_executable(testIndexedPPS23RBBinaryTree testIndexedPPS23RBBinaryTree.cpp)
+target_link_libraries(testIndexedPPS23RBBinaryTree)
