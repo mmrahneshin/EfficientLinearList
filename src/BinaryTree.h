@@ -1,4 +1,4 @@
-// Copyright (C) Kamaledin Ghiasi-Shirazi, Ferdowsi Univerity of Mashhad, 2016 (1395 Hijri Shamsi)
+// Copyright (C) Kamaledin Ghiasi-Shirazi, Ferdowsi Univerity of Mashhad, 2024 (1404 Hijri Shamsi)
 //
 // Author: Kamaledin Ghiasi-Shirazi, Mohammad Mahdi Rahneshin
 
@@ -6,57 +6,37 @@
 
 using namespace std;
 
-template <class T, class IBTN>
+template <class T>
 class BinaryTree
 {
-public:
-	class BinaryTreeNode
-	{
-	public:
-		virtual ~BinaryTreeNode(void) {}
-		virtual T &getData() { return mActualNode->getData(); }
-		virtual void setData(const T &data) { mActualNode->mData = data; }
-		virtual BinaryTreeNode getLeftChild() const { return BinaryTreeNode(mActualNode->getLeftChild()); }
-		virtual BinaryTreeNode getRightChild() const { return BinaryTreeNode(mActualNode->getRightChild()); }
-		virtual BinaryTreeNode getParent() const { return BinaryTreeNode(mActualNode->getParent()); }
-		virtual bool operator==(BinaryTreeNode &btn) { return mActualNode == btn.mActualNode; }
-		virtual bool operator!=(BinaryTreeNode &btn) { return mActualNode != btn.mActualNode; }
-
-	private:
-		friend class BinaryTree<T, IBTN>;
-		BinaryTreeNode(IBTN *node) { mActualNode = node; }
-
-		IBTN *mActualNode;
-	};
-
 public:
 	class Iterator
 	{
 	public:
-		Iterator(IBTN *currentNode, IBTN *nil) : mCurrentNode(currentNode), mNilSentinel(nil) {}
+		Iterator(BinaryTreeNode<T> *currentNode, BinaryTreeNode<T> *nil) : mCurrentNode(currentNode), mNilSentinel(nil) {}
 		virtual T &operator*() { return mCurrentNode->mData; }
 		virtual T *operator->() { return &mCurrentNode->mData; }
 		virtual bool operator==(Iterator &itr) { return mCurrentNode == itr.mCurrentNode; }
 		virtual bool operator!=(Iterator &itr) { return mCurrentNode != itr.mCurrentNode; }
 		virtual void operator++() = 0;
 		virtual void operator--() = 0;
-		virtual BinaryTreeNode getBinaryTreeNode() { return BinaryTreeNode(mCurrentNode); }
+		virtual BinaryTreeNode<T> *getBinaryTreeNode() { return mCurrentNode; }
 
 	protected:
-		IBTN *mCurrentNode;
-		IBTN *mNilSentinel;
+		BinaryTreeNode<T> *mCurrentNode;
+		BinaryTreeNode<T> *mNilSentinel;
 
-		friend class BinaryTree<T, IBTN>;
+		friend class BinaryTree<T>;
 	};
 
 	class InOrderIterator : public Iterator
 	{
 	public:
-		InOrderIterator(IBTN *currentNode, IBTN *nil) : Iterator(currentNode, nil) {}
+		InOrderIterator(BinaryTreeNode<T> *currentNode, BinaryTreeNode<T> *nil) : Iterator(currentNode, nil) {}
 		virtual void operator++()
 		{
 			// Write your code here
-			IBTN *theNode = this->mCurrentNode;
+			BinaryTreeNode<T> *theNode = this->mCurrentNode;
 			if (theNode->mRightChild != this->mNilSentinel)
 			{
 				theNode = theNode->mRightChild;
@@ -67,7 +47,7 @@ public:
 			}
 			else
 			{
-				IBTN *lastNode = theNode;
+				BinaryTreeNode<T> *lastNode = theNode;
 				do
 				{
 					lastNode = theNode;
@@ -80,7 +60,7 @@ public:
 		virtual void operator--()
 		{
 			// Write your code here
-			IBTN *theNode = this->mCurrentNode;
+			BinaryTreeNode<T> *theNode = this->mCurrentNode;
 
 			if (theNode->mLeftChild != this->mNilSentinel)
 			{
@@ -92,7 +72,7 @@ public:
 			}
 			else
 			{
-				IBTN *lastNode = theNode;
+				BinaryTreeNode<T> *lastNode = theNode;
 				do
 				{
 					lastNode = theNode;
@@ -106,11 +86,11 @@ public:
 	class PreOrderIterator : public Iterator
 	{
 	public:
-		PreOrderIterator(IBTN *currentNode, IBTN *nil) : Iterator(currentNode, nil) {}
+		PreOrderIterator(BinaryTreeNode<T> *currentNode, BinaryTreeNode<T> *nil) : Iterator(currentNode, nil) {}
 		virtual void operator++()
 		{
 			// Write your code here
-			IBTN *theNode = this->mCurrentNode;
+			BinaryTreeNode<T> *theNode = this->mCurrentNode;
 
 			if (theNode->mLeftChild != this->mNilSentinel)
 			{
@@ -122,7 +102,7 @@ public:
 			}
 			else
 			{
-				IBTN *lastNode = theNode;
+				BinaryTreeNode<T> *lastNode = theNode;
 				do
 				{
 					lastNode = theNode;
@@ -136,9 +116,9 @@ public:
 		virtual void operator--()
 		{
 			// Write your code here
-			IBTN *theNode = this->mCurrentNode;
+			BinaryTreeNode<T> *theNode = this->mCurrentNode;
 
-			IBTN *theParent = theNode->mParent;
+			BinaryTreeNode<T> *theParent = theNode->mParent;
 			if (theParent->mLeftChild == theNode || (theParent->mRightChild == theNode && theParent->mLeftChild == this->mNilSentinel))
 				theNode = theParent;
 			else
@@ -165,12 +145,12 @@ public:
 	class PostOrderIterator : public Iterator
 	{
 	public:
-		PostOrderIterator(IBTN *currentNode, IBTN *nil) : Iterator(currentNode, nil) {}
+		PostOrderIterator(BinaryTreeNode<T> *currentNode, BinaryTreeNode<T> *nil) : Iterator(currentNode, nil) {}
 		virtual void operator++()
 		{
 			// Write your code here
-			IBTN *theNode = this->mCurrentNode;
-			IBTN *theParent = theNode->mParent;
+			BinaryTreeNode<T> *theNode = this->mCurrentNode;
+			BinaryTreeNode<T> *theParent = theNode->mParent;
 
 			if (theParent->mRightChild == theNode || (theParent->mLeftChild == theNode && theParent->mRightChild == this->mNilSentinel))
 				theNode = theParent;
@@ -197,7 +177,7 @@ public:
 		virtual void operator--()
 		{
 			// Write your code here
-			IBTN *theNode = this->mCurrentNode;
+			BinaryTreeNode<T> *theNode = this->mCurrentNode;
 
 			if (theNode->mRightChild != this->mNilSentinel)
 			{
@@ -209,7 +189,7 @@ public:
 			}
 			else
 			{
-				IBTN *lastNode = theNode;
+				BinaryTreeNode<T> *lastNode = theNode;
 				do
 				{
 					lastNode = theNode;
@@ -221,89 +201,65 @@ public:
 		}
 	};
 
-protected:
-	/*
-									mInOrderPreBegin
-					----------------------|-------------
-					|									|
-			mPostorderPreBegin			mRevInOrderPreBegin=mPreorderPreBegin
-									 -------------------|-------------------
-									|                                       |
-								ActualTree				mRevPreorderPreBegin=mRevPostorderPreBegin
-	*/
+	BinaryTreeNode<T> *mInOrderPreBegin;
+	BinaryTreeNode<T> *mPostOrderPreBegin;
+	BinaryTreeNode<T> *mRevInOrderPreBegin;
+	BinaryTreeNode<T> *mPreOrderPreBegin;
+	BinaryTreeNode<T> *mRevPreOrderPreBegin;
+	BinaryTreeNode<T> *mRevPostOrderPreBegin;
 
-	/*
-									mRevInOrderEnd
-					----------------------|---------------------
-					|											|
-			   mRevPostorderEnd						mInOrderEnd=mRevPreorderEnd
-											 -------------------|-------------------
-											|                                       |
-										ActualTree					    mPreorderEnd=mPostorderEnd
-	*/
-
-	IBTN *mInOrderPreBegin;
-	IBTN *mPostorderPreBegin;
-	IBTN *mRevInOrderPreBegin;
-	IBTN *mPreorderPreBegin;
-	IBTN *mRevPreorderPreBegin;
-	IBTN *mRevPostorderPreBegin;
-
-	IBTN *mRevInOrderEnd;
-	IBTN *mRevPostorderEnd;
-	IBTN *mInOrderEnd;
-	IBTN *mRevPreorderEnd;
-	IBTN *mPreorderEnd;
-	IBTN *mPostorderEnd;
-	IBTN *mNilSentinel;
-	int mNodeDisplayWidth; // we can delete mNodeDisplayWidth
+	BinaryTreeNode<T> *mRevInOrderEnd;
+	BinaryTreeNode<T> *mRevPostOrderEnd;
+	BinaryTreeNode<T> *mInOrderEnd;
+	BinaryTreeNode<T> *mRevPreOrderEnd;
+	BinaryTreeNode<T> *mPreOrderEnd;
+	BinaryTreeNode<T> *mPostOrderEnd;
+	BinaryTreeNode<T> *mNilSentinel;
 	int mSize;
 
-public:
 	BinaryTree(void)
 	{
-		mNodeDisplayWidth = 1; // we can delete mNodeDisplayWidth
 		mSize = 0;
-		mNilSentinel = new IBTN();
-		mRevInOrderEnd = new IBTN();
-		mRevPostorderEnd = new IBTN();
-		mInOrderEnd = new IBTN();
-		mRevPreorderEnd = mInOrderEnd;
-		mPreorderEnd = new IBTN();
-		mPostorderEnd = mPreorderEnd;
+		mNilSentinel = new BinaryTreeNode<T>();
+		mRevInOrderEnd = new BinaryTreeNode<T>();
+		mRevPostOrderEnd = new BinaryTreeNode<T>();
+		mInOrderEnd = new BinaryTreeNode<T>();
+		mRevPreOrderEnd = mRevPostOrderEnd;
+		mPreOrderEnd = new BinaryTreeNode<T>();
+		mPostOrderEnd = mRevInOrderEnd;
 
-		mRevPostorderEnd->mParent = mRevInOrderEnd;
-		mRevPostorderEnd->mLeftChild = mNilSentinel;
-		mRevPostorderEnd->mRightChild = mNilSentinel;
+		mRevPostOrderEnd->mParent = mRevInOrderEnd;
+		mRevPostOrderEnd->mLeftChild = mNilSentinel;
+		mRevPostOrderEnd->mRightChild = mNilSentinel;
 
-		mRevInOrderEnd->mLeftChild = mRevPostorderEnd;
-		mRevInOrderEnd->mRightChild = mInOrderEnd;
+		mRevInOrderEnd->mLeftChild = mRevPostOrderEnd;
+		mRevInOrderEnd->mRightChild = mNilSentinel;
+		mRevInOrderEnd->mParent = mInOrderEnd;
 
-		mInOrderEnd->mRightChild = mPreorderEnd;
-		mInOrderEnd->mParent = mRevInOrderEnd;
-		mInOrderEnd->mLeftChild = mNilSentinel;
+		mInOrderEnd->mRightChild = mPreOrderEnd;
+		mInOrderEnd->mLeftChild = mRevInOrderEnd;
 
-		mPreorderEnd->mParent = mInOrderEnd;
-		mPreorderEnd->mLeftChild = mNilSentinel;
-		mPreorderEnd->mRightChild = mNilSentinel;
+		mPreOrderEnd->mParent = mInOrderEnd;
+		mPreOrderEnd->mLeftChild = mNilSentinel;
+		mPreOrderEnd->mRightChild = mNilSentinel;
 
 		mInOrderPreBegin = mRevInOrderEnd;
-		mPostorderPreBegin = mRevPostorderEnd;
+		mPostOrderPreBegin = mRevPostOrderEnd;
 		mRevInOrderPreBegin = mInOrderEnd;
-		mPreorderPreBegin = mInOrderEnd;
-		mRevPreorderPreBegin = mPreorderEnd;
-		mRevPostorderPreBegin = mPreorderEnd;
+		mPreOrderPreBegin = mRevPreOrderEnd;
+		mRevPreOrderPreBegin = mPreOrderEnd;
+		mRevPostOrderPreBegin = mPostOrderEnd;
 	}
 
 	// caution: don't interpret virtual destructor as an ordinary virtual function!
 	virtual ~BinaryTree(void)
 	{
-		DeleteSubtree(mRevInOrderEnd);
+		DeleteSubtree(mInOrderEnd);
 		delete mNilSentinel;
 	}
 
 	int size() { return mSize; }
-	void DeleteSubtree(IBTN *node)
+	void DeleteSubtree(BinaryTreeNode<T> *node)
 	{
 		if (node->mLeftChild != mNilSentinel)
 			DeleteSubtree(node->mLeftChild);
@@ -314,48 +270,46 @@ public:
 
 	bool isEmpty()
 	{
-		return mInOrderEnd->mLeftChild == mNilSentinel;
+		return mPostOrderEnd->mRightChild == mNilSentinel;
 	}
 
-	virtual bool hasLeftChild(const BinaryTreeNode &node) const { return node.mActualNode->mLeftChild != mNilSentinel; }
+	virtual bool hasLeftChild(BinaryTreeNode<T> *node) const { return node->mLeftChild != mNilSentinel; }
 
-	virtual bool hasRightChild(const BinaryTreeNode &node) const { return node.mActualNode->mRightChild != mNilSentinel; }
+	virtual bool hasRightChild(BinaryTreeNode<T> *node) const { return node->mRightChild != mNilSentinel; }
 
 	virtual void insertRootNode(T data)
 	{
-		IBTN *root;
-		if (mInOrderEnd->mLeftChild != mNilSentinel)
+		BinaryTreeNode<T> *root;
+		if (mPostOrderEnd->mRightChild != mNilSentinel)
 			throw std::runtime_error("Error: Root already exists.");
-		root = new IBTN();
+		root = new BinaryTreeNode<T>();
 		root->mData = data;
-		root->mParent = mInOrderEnd;
-		mInOrderEnd->mLeftChild = root;
-
+		root->mParent = mPostOrderEnd;
+		mPostOrderEnd->mRightChild = root;
 		root->mLeftChild = mNilSentinel;
 		root->mRightChild = mNilSentinel;
 		mSize = 1;
-		updateAfterInsert(mInOrderEnd->mLeftChild);
+		updateAfterInsert(mPostOrderEnd->mRightChild);
 	}
 
-	virtual BinaryTreeNode getRootNode() { return BinaryTreeNode(mInOrderEnd->mLeftChild); }
+	virtual BinaryTreeNode<T> *getRootNode() { return mPostOrderEnd->mRightChild; }
 
-	virtual BinaryTreeNode getHeaderRootNode() { return BinaryTreeNode(mRevInOrderEnd); }
+	virtual BinaryTreeNode<T> *getHeaderRootNode() { return mInOrderEnd; }
 
 	// error if a left child already exists.
-	virtual void insertLeftChild(const BinaryTreeNode &parentNode, T data)
+	virtual void insertLeftChild(BinaryTreeNode<T> *parentNode, T data)
 	{
 		// Write your code here
-		IBTN *parentIBTN = parentNode.mActualNode;
-		if (parentIBTN)
+		if (parentNode)
 		{
-			if (parentIBTN->mLeftChild == mNilSentinel)
+			if (parentNode->mLeftChild == mNilSentinel)
 			{
-				IBTN *childNode = new IBTN();
+				BinaryTreeNode<T> *childNode = new BinaryTreeNode<T>();
 				childNode->mData = data;
-				childNode->mParent = parentIBTN;
+				childNode->mParent = parentNode;
 				childNode->mLeftChild = mNilSentinel;
 				childNode->mRightChild = mNilSentinel;
-				parentIBTN->mLeftChild = childNode;
+				parentNode->mLeftChild = childNode;
 				mSize++;
 				updateAfterInsert(childNode);
 			}
@@ -367,20 +321,19 @@ public:
 	}
 
 	// error if a right child already exists.
-	virtual void insertRightChild(const BinaryTreeNode &parentNode, T data)
+	virtual void insertRightChild(BinaryTreeNode<T> *parentNode, T data)
 	{
 		// Write your code here
-		IBTN *parentIBTN = parentNode.mActualNode;
-		if (parentIBTN)
+		if (parentNode)
 		{
-			if (parentIBTN->mRightChild == mNilSentinel)
+			if (parentNode->mRightChild == mNilSentinel)
 			{
-				IBTN *childNode = new IBTN();
+				BinaryTreeNode<T> *childNode = new BinaryTreeNode<T>();
 				childNode->mData = data;
-				childNode->mParent = parentIBTN;
+				childNode->mParent = parentNode;
 				childNode->mLeftChild = mNilSentinel;
 				childNode->mRightChild = mNilSentinel;
-				parentIBTN->mRightChild = childNode;
+				parentNode->mRightChild = childNode;
 				mSize++;
 				updateAfterInsert(childNode);
 			}
@@ -391,24 +344,24 @@ public:
 			throw std::runtime_error("Invalid Pointer.");
 	}
 
-	virtual void deleteLeftChild(const BinaryTreeNode &node)
+	virtual void deleteLeftChild(BinaryTreeNode<T> *node)
 	{
-		IBTN *theParent = node.mActualNode;
-		IBTN *theNode = theParent->getLeftChild();
+		BinaryTreeNode<T> *theParent = node;
+		BinaryTreeNode<T> *theNode = theParent->getLeftChild();
 		deleteNode(theNode, theParent);
 	}
 
-	virtual void deleteRightChild(const BinaryTreeNode &node)
+	virtual void deleteRightChild(BinaryTreeNode<T> *node)
 	{
-		IBTN *theParent = node.mActualNode;
-		IBTN *theNode = theParent->getRightChild();
+		BinaryTreeNode<T> *theParent = node;
+		BinaryTreeNode<T> *theNode = theParent->getRightChild();
 		deleteNode(theNode, theParent);
 	}
 
 	virtual InOrderIterator inOrderBegin()
 	{
 		// Write your code here
-		IBTN *theNode = mInOrderPreBegin;
+		BinaryTreeNode<T> *theNode = mInOrderPreBegin;
 		InOrderIterator itr(theNode, mNilSentinel);
 		++itr;
 		return itr;
@@ -422,7 +375,7 @@ public:
 	virtual InOrderIterator inOrderReverseBegin()
 	{
 		// Write your code here
-		IBTN *theNode = mRevInOrderPreBegin;
+		BinaryTreeNode<T> *theNode = mRevInOrderPreBegin;
 		InOrderIterator itr(theNode, mNilSentinel);
 		--itr;
 		return itr;
@@ -436,7 +389,7 @@ public:
 	virtual PreOrderIterator preOrderBegin()
 	{
 		// Write your code here
-		IBTN *theNode = mPreorderPreBegin;
+		BinaryTreeNode<T> *theNode = mPreOrderPreBegin;
 		PreOrderIterator itr(theNode, mNilSentinel);
 		++itr;
 		return itr;
@@ -444,13 +397,13 @@ public:
 
 	virtual PreOrderIterator preOrderEnd()
 	{
-		return PreOrderIterator(mPreorderEnd, mNilSentinel);
+		return PreOrderIterator(mPreOrderEnd, mNilSentinel);
 	}
 
 	virtual PreOrderIterator preOrderReverseBegin()
 	{
 		// Write your code here
-		IBTN *theNode = mRevPreorderPreBegin;
+		BinaryTreeNode<T> *theNode = mRevPreOrderPreBegin;
 		PreOrderIterator itr(theNode, mNilSentinel);
 		--itr;
 		return itr;
@@ -458,13 +411,13 @@ public:
 
 	virtual PreOrderIterator preOrderReverseEnd()
 	{
-		return PreOrderIterator(mRevPreorderEnd, mNilSentinel);
+		return PreOrderIterator(mRevPreOrderEnd, mNilSentinel);
 	}
 
 	virtual PostOrderIterator postOrderBegin()
 	{
 		// Write your code here
-		IBTN *theNode = mPostorderPreBegin;
+		BinaryTreeNode<T> *theNode = mPostOrderPreBegin;
 		PostOrderIterator itr(theNode, mNilSentinel);
 		++itr;
 		return itr;
@@ -472,13 +425,13 @@ public:
 
 	virtual PostOrderIterator postOrderEnd()
 	{
-		return PostOrderIterator(mPostorderEnd, mNilSentinel);
+		return PostOrderIterator(mPostOrderEnd, mNilSentinel);
 	}
 
 	virtual PostOrderIterator postOrderReverseBegin()
 	{
 		// Write your code here
-		IBTN *theNode = mRevPostorderPreBegin;
+		BinaryTreeNode<T> *theNode = mRevPostOrderPreBegin;
 		PostOrderIterator itr(theNode, mNilSentinel);
 		--itr;
 		return itr;
@@ -486,12 +439,7 @@ public:
 
 	virtual PostOrderIterator postOrderReverseEnd()
 	{
-		return PostOrderIterator(mRevPostorderEnd, mNilSentinel);
-	}
-
-	void setNodeDisplayWidth(int width) // we can delete mNodeDisplayWidth
-	{
-		mNodeDisplayWidth = width; // we can delete mNodeDisplayWidth
+		return PostOrderIterator(mRevPostOrderEnd, mNilSentinel);
 	}
 
 	// This function is solely written to work on small binary trees.
@@ -500,17 +448,14 @@ public:
 	{
 		if (mSize == 0)
 			return;
-
 		int maxDepth = 9;
-		int depth = depthCalc(getRootNode().mActualNode, 1);
+		int depth = depthCalc(getRootNode(), 1);
 		depth = depth * 2 - 1;
-
 		if (depth > maxDepth)
 		{
 			out << "Can't draw, the height of the tree is greater than " << (maxDepth + 1) / 2 << "\n";
 			return;
 		}
-
 		T **dataMap = new T *[depth];
 		char **linesMap = new char *[depth];
 		for (int i = 0; i < depth; i++)
@@ -523,9 +468,7 @@ public:
 				linesMap[i][j] = ' ';
 			}
 		}
-
-		recursiveDraw(getRootNode().mActualNode, dataMap, linesMap, 40, 0);
-
+		recursiveDraw(getRootNode(), dataMap, linesMap, 40, 0);
 		for (int i = 0; i < depth; i++)
 			for (int j = 0; j < 80; j++)
 			{
@@ -538,7 +481,6 @@ public:
 					out << linesMap[i][j];
 				}
 			}
-
 		for (int i = 0; i < depth; i++)
 		{
 			delete[] dataMap[i];
@@ -555,27 +497,43 @@ public:
 		return stream.str();
 	}
 
-	int depthCalc(const BinaryTreeNode &node, int depth)
+	int depthCalc(BinaryTreeNode<T> *root, int depth)
 	{
-		return depthCalc(node.mActualNode, depth);
+		if (mSize == 0)
+		{
+			return 0;
+		}
+
+		int res = depth;
+		if (root->mRightChild != mNilSentinel)
+		{
+			int rightDepth = depthCalc(root->mRightChild, depth + 1);
+			res = (res > rightDepth) ? res : rightDepth;
+		}
+		if (root->mLeftChild != mNilSentinel)
+		{
+			int leftDepth = depthCalc(root->mLeftChild, depth + 1);
+			res = (res > leftDepth) ? res : leftDepth;
+		}
+		return res;
 	}
 
 protected:
-	virtual void updateAfterInsert(IBTN *node) { return; }
+	virtual void updateAfterInsert(BinaryTreeNode<T> *node) { return; }
 
-	virtual void updateBeforeDelete(IBTN *node) { return; }
+	virtual void updateBeforeDelete(BinaryTreeNode<T> *node) { return; }
 
-	virtual void updateAfterDelete(IBTN *node) { return; }
+	virtual void updateAfterDelete(BinaryTreeNode<T> *node) { return; }
 
-	virtual void deleteDeg2Node(IBTN *node) { throw std::runtime_error("error, can't delete degree-2 node"); }
+	virtual void deleteDeg2Node(BinaryTreeNode<T> *node) { throw std::runtime_error("error, can't delete degree-2 node"); }
 	// If a degree-1 node is deleted, it is replaced by its subtree.
-	virtual void deleteNode(IBTN *theNode, IBTN *theParent)
+	virtual void deleteNode(BinaryTreeNode<T> *theNode, BinaryTreeNode<T> *theParent)
 	{
 		// Write your code here
 		if (theNode->mLeftChild == mNilSentinel || theNode->mRightChild == mNilSentinel)
 		{
 			updateBeforeDelete(theNode);
-			IBTN *theChild;
+			BinaryTreeNode<T> *theChild;
 			if (theNode->mRightChild != mNilSentinel)
 			{
 				theChild = theNode->mRightChild;
@@ -604,36 +562,14 @@ protected:
 		}
 	}
 
-	int depthCalc(IBTN *root, int depth)
-	{
-		if (mSize == 0)
-		{
-			return 0;
-		}
-
-		int res = depth;
-		if (root->mRightChild != mNilSentinel)
-		{
-			int rightDepth = depthCalc(root->mRightChild, depth + 1);
-			res = (res > rightDepth) ? res : rightDepth;
-		}
-		if (root->mLeftChild != mNilSentinel)
-		{
-			int leftDepth = depthCalc(root->mLeftChild, depth + 1);
-			res = (res > leftDepth) ? res : leftDepth;
-		}
-		return res;
-	}
-
-	void recursiveDraw(IBTN *root, T **dataMap, char **linesMap, int x, int y)
+	void recursiveDraw(BinaryTreeNode<T> *root, T **dataMap, char **linesMap, int x, int y)
 	{
 		int des = 1;
 		for (int i = 0; i < y / 2 + 2; i++)
 			des *= 2;
 		des = 80 / des;
 		// root:
-		for (int i = 0; i < mNodeDisplayWidth; i++)					 // we can delete mNodeDisplayWidth
-			dataMap[y][x + i - mNodeDisplayWidth / 2] = root->mData; // we can delete mNodeDisplayWidth
+		dataMap[y][x - 1 / 2] = root->mData; // we can delete mNodeDisplayWidth
 		// left child:
 		if (root->mLeftChild != mNilSentinel)
 		{
@@ -651,7 +587,4 @@ protected:
 			recursiveDraw(root->mRightChild, dataMap, linesMap, x + des, y + 2);
 		}
 	}
-
-protected:
-	virtual IBTN *getActualNode(const BinaryTreeNode &node) { return node.mActualNode; }
 };
