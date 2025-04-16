@@ -7,5 +7,5 @@
 # add_executable(testTemplate testTemplate.cpp)
 # target_link_libraries(testTemplate)
 
-add_executable(EfficientLinearList_vs_vector EfficientLinearList_vs_vector.cpp)
-target_link_libraries(EfficientLinearList_vs_vector)
+add_executable(efficientLinearList_vs_vector efficientLinearList_vs_vector.cpp)
+target_link_libraries(efficientLinearList_vs_vector)
