@@ -147,7 +147,7 @@ bool deleteCheck(CharBinaryTree *bt)
     //										/		\        	  /   \
     //								  	   g		 h           a      k
     //                                                                i   c
-    CharBinaryTree::BinaryTreeNode mInOrderEnd = bt->getHeaderRootNode().getRightChild();
+    CharBinaryTree::BinaryTreeNode mPostOrderEnd = bt->getHeaderRootNode().getLeftChild();
     CharBinaryTree::BinaryTreeNode btnl = bt->getRootNode();
     CharBinaryTree::BinaryTreeNode btne = btnl.getRightChild();
     CharBinaryTree::BinaryTreeNode btna = btne.getLeftChild();
@@ -167,10 +167,10 @@ bool deleteCheck(CharBinaryTree *bt)
         return result;
     }
 
-    bt->deleteLeftChild(mInOrderEnd);
+    bt->deleteRightChild(mPostOrderEnd);
     btnh = btnl;
 
-    if (btnh.getParent() != mInOrderEnd || btnk.getParent() != btnh ||
+    if (btnh.getParent() != mPostOrderEnd || btnk.getParent() != btnh ||
         bt->getColor(btng) != 0 || bt->getColor(btnk) != 0)
     {
         result = false;

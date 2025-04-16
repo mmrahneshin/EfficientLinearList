@@ -12,8 +12,8 @@ class IndexedBinaryTree : virtual public BinaryTree<T, IBTN>
 public:
 	IndexedBinaryTree(void) : BinaryTree<T, IBTN>()
 	{
-		this->mRevInOrderEnd->mLeftSize = -1;
 		this->mInOrderEnd->mLeftSize = 0;
+		this->mPostOrderEnd->mLeftSize = -1;
 	}
 
 	virtual ~IndexedBinaryTree(void) {}

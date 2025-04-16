@@ -55,8 +55,8 @@ protected:
             else if (parentNode->mColor == IPSRBBTN::BLACK)
                 break;
         }
-        if (deficientNode != this->mInOrderEnd->mLeftChild) // x->mColor is certainly BLACK
-            deficientNode->mColor = IPSRBBTN::RED;          // Rule (a.1)
+        if (deficientNode != this->mPostOrderEnd->mRightChild) // x->mColor is certainly BLACK
+            deficientNode->mColor = IPSRBBTN::RED;             // Rule (a.1)
     }
 
     virtual void updateBeforeDelete(IBTN *node) override
@@ -89,7 +89,7 @@ protected:
 
     void remove_bottom_up_pass(IBTN *x)
     {
-        while (x != this->mInOrderEnd->mLeftChild && x->mColor == IPSRBBTN::BLACK)
+        while (x != this->mPostOrderEnd->mRightChild && x->mColor == IPSRBBTN::BLACK)
         {
             x = applyParitySeekingRules(x);
         }
@@ -132,7 +132,7 @@ protected:
             }
             x->mLeftChild->mColor = IPSRBBTN::BLACK;  // Fixing rule (c)
             x->mRightChild->mColor = IPSRBBTN::BLACK; // Fixing rule (c)
-            x = this->mInOrderEnd->mLeftChild;        // terminate the bottom up pass
+            x = this->mPostOrderEnd->mRightChild;     // terminate the bottom up pass
         }
         return x;
     }
