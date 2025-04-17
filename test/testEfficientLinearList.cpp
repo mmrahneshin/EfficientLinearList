@@ -5,16 +5,8 @@
 #include <iostream>
 #include <stack>
 #include <sstream>
-#include "../src/InternalBinaryTreeNode.h"
-#include "../src/InternalInOrderPreservingBinaryTreeNode.h"
-#include "../src/InternalIndexedBinaryTreeNode.h"
-#include "../src/InternalPureParitySeeking-23RedBlackBinaryTreeNode.h"
-#include "../src/InternalIndexedPPS23RedBlackBinaryTreeNode.h"
 
-#include "../src/BinaryTree.h"
-#include "../src/InOrderPreservingBinaryTree.h"
-#include "../src/IndexedBinaryTree.h"
-#include "../src/PureParitySeeking-23RedBlackBinaryTree.h"
+#include "../src/IndexedPPS23RBBinaryTreeNode.h"
 #include "../src/IndexedPPS23RedBlackBinaryTree.h"
 #include "../src/EfficientLinearList.h"
 

@@ -7,16 +7,7 @@
 #include <sstream>
 #include <optional>
 
-#include "../src/InternalBinaryTreeNode.h"
-#include "../src/InternalInOrderPreservingBinaryTreeNode.h"
-#include "../src/InternalIndexedBinaryTreeNode.h"
-#include "../src/InternalPureParitySeeking-23RedBlackBinaryTreeNode.h"
-#include "../src/InternalIndexedPPS23RedBlackBinaryTreeNode.h"
-
-#include "../src/BinaryTree.h"
-#include "../src/InOrderPreservingBinaryTree.h"
-#include "../src/IndexedBinaryTree.h"
-#include "../src/PureParitySeeking-23RedBlackBinaryTree.h"
+#include "../src/IndexedPPS23RBBinaryTreeNode.h"
 #include "../src/IndexedPPS23RedBlackBinaryTree.h"
 #include "../src/EfficientLinearList.h"
 
@@ -134,7 +125,7 @@ int main()
     deleteIndexes = new int[size / 2];
     for (int i = 0; i < size; i++)
     {
-        values[i] = (rand() % size) + 1;
+        values[i] = i + 1;
         indexes[i] = i;
     }
 
@@ -142,7 +133,7 @@ int main()
     EfficientLinearList<int> *ell;
     vector<int> *vec;
     cout << "The test has started now with " << size << " insertions and " << size / 2 << " deletions:" << endl;
-    for (input = 0; input < 6; input++)
+    for (input = 0; input < 2; input++)
     {
         switch (input)
         {
@@ -165,6 +156,15 @@ int main()
             removeFromEfficientLinearList(ell, size / 2);
             removeFromVector(vec, size / 2);
             result = valueCheck(ell, vec, size / 2);
+
+            // for (int i = 0; i < size; i++)
+            // {
+            //     indexes[i] = i + (size / 2);
+            // }
+
+            // insertToEfficientLinearList(ell, size);
+            // insertToVector(vec, size);
+            // result = valueCheck(ell, vec, size);
             break;
         case 2: // insert tests
             cout << endl

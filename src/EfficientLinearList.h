@@ -8,7 +8,8 @@ template <class T>
 class EfficientLinearList
 {
 public:
-	typedef IndexedPPS23RedBlackBinaryTree<T, InternalIndexedPPS23RedBlackBinaryTreeNode<T>> BT;
+	typedef IndexedPPS23RedBlackBinaryTree<T> BT;
+	typedef IndexedPPS23RBBinaryTreeNode<T> IPPS23RBBTN;
 
 	EfficientLinearList(void)
 	{
@@ -23,39 +24,51 @@ public:
 public:
 	virtual void insert(const int &idx, const T &data)
 	{
-		if (idx < 0 || idx > this->size())
+		if (idx < 0 || idx > mIPPS23RBbt->size())
 		{
 			throw std::runtime_error("out_of_range");
 		}
 
-		typename BT::BinaryTreeNode node = getNode(idx);
+		if (idx == mIPPS23RBbt->size())
+		{
+			mIPPS23RBbt->insertLastInOrderNode(data);
+			return;
+		}
+
+		IPPS23RBBTN *node = getNode(idx);
 		if (!mIPPS23RBbt->hasLeftChild(node))
 		{
 			mIPPS23RBbt->insertLeftChild(node, data);
 		}
 		else
 		{
-			node = node.getLeftChild();
+			node = node->mLeftChild;
 			while (mIPPS23RBbt->hasRightChild(node))
-				node = node.getRightChild();
+				node = node->mRightChild;
 			mIPPS23RBbt->insertRightChild(node, data);
 		}
 	}
 
 	virtual T &operator[](const int &idx)
 	{
-		typename BT::BinaryTreeNode node = getNode(idx);
-		return node.getData();
+		IPPS23RBBTN *node = getNode(idx);
+		return node->mData;
 	}
 
 	virtual void remove(const int &idx)
 	{
-		if (idx < 0 || idx >= this->size())
+		if (idx < 0 || idx >= mIPPS23RBbt->size())
 		{
 			throw std::runtime_error("out_of_range");
 		}
 
-		typename BT::BinaryTreeNode node = getNode(idx);
+		if (idx == mIPPS23RBbt->size() - 1)
+		{
+			mIPPS23RBbt->deleteLastInOrderNode();
+			return;
+		}
+
+		IPPS23RBBTN *node = getNode(idx);
 		mIPPS23RBbt->deleteNode(node);
 	}
 
@@ -64,50 +77,46 @@ public:
 		return mIPPS23RBbt->size();
 	};
 
-	virtual int depth() const
-	{
-		return mIPPS23RBbt->depthCalc(mIPPS23RBbt->getRootNode(), 1);
-	};
-
-	virtual void drawTree()
-	{
-		mIPPS23RBbt->draw(cout);
-	}
-
-	void iterateInOrder()
-	{
-		typename BT::InOrderIterator itrInOrder = mIPPS23RBbt->inOrderBegin();
-		typename BT::InOrderIterator endInOrder = mIPPS23RBbt->inOrderEnd();
-
-		while (itrInOrder != endInOrder)
-		{
-			cout << "left size: " << mIPPS23RBbt->getLeftSize(itrInOrder.getBinaryTreeNode())
-				 << " / value: " << *itrInOrder << "   ";
-			++itrInOrder;
-		}
-		cout << endl;
-	}
+	// virtual int depth() const
+	// {
+	// 	return mIPPS23RBbt->depthCalc(mIPPS23RBbt->getRootNode(), 1);
+	// };
+	// virtual void drawTree()
+	// {
+	// 	mIPPS23RBbt->draw(cout);
+	// }
+	// void iterateInOrder()
+	// {
+	// 	typename BT::InOrderIterator itrInOrder = mIPPS23RBbt->inOrderBegin();
+	// 	typename BT::InOrderIterator endInOrder = mIPPS23RBbt->inOrderEnd();
+	// 	while (itrInOrder != endInOrder)
+	// 	{
+	// 		cout << "left size: " << itrInOrder.getBinaryTreeNode()->mLeftSize
+	// 			 << " / value: " << *itrInOrder << "   ";
+	// 		++itrInOrder;
+	// 	}
+	// 	cout << endl;
+	// }
 
 private:
-	virtual typename BT::BinaryTreeNode getNode(int idx)
+	virtual IPPS23RBBTN *getNode(int idx)
 	{
-		typename BT::BinaryTreeNode node = mIPPS23RBbt->getHeaderRootNode();
-		while (mIPPS23RBbt->getLeftSize(node) != idx)
+		IPPS23RBBTN *node = mIPPS23RBbt->mInOrderEnd;
+		while (node->mLeftSize != idx)
 		{
-			if (idx < mIPPS23RBbt->getLeftSize(node))
+			if (idx < node->mLeftSize)
 			{
-				node = node.getLeftChild();
+				node = node->mLeftChild;
 			}
 			else
 			{
-				idx = idx - mIPPS23RBbt->getLeftSize(node) - 1;
-				node = node.getRightChild();
+				idx = idx - node->mLeftSize - 1;
+				node = node->mRightChild;
 			}
 		}
 
 		return node;
 	}
 
-protected:
 	BT *mIPPS23RBbt;
 };

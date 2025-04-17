@@ -7,22 +7,14 @@
 #include <stack>
 #include <sstream>
 
-#include "../src/InternalBinaryTreeNode.h"
-#include "../src/InternalInOrderPreservingBinaryTreeNode.h"
-#include "../src/InternalIndexedBinaryTreeNode.h"
-#include "../src/InternalPureParitySeeking-23RedBlackBinaryTreeNode.h"
-#include "../src/InternalIndexedPPS23RedBlackBinaryTreeNode.h"
-
-#include "../src/BinaryTree.h"
-#include "../src/InOrderPreservingBinaryTree.h"
-#include "../src/IndexedBinaryTree.h"
-#include "../src/PureParitySeeking-23RedBlackBinaryTree.h"
+#include "../src/IndexedPPS23RBBinaryTreeNode.h"
 #include "../src/IndexedPPS23RedBlackBinaryTree.h"
 
 #include <iostream>
 
 using namespace std;
-typedef IndexedPPS23RedBlackBinaryTree<char, InternalIndexedPPS23RedBlackBinaryTreeNode<char>> CharBinaryTree;
+typedef IndexedPPS23RedBlackBinaryTree<char> CharBinaryTree;
+typedef IndexedPPS23RBBinaryTreeNode<char> IPPS23RBBTN;
 
 char inOrder[] = {'g', 'd', 'h', 'l', 'a', 'e', 'i', 'k', 'c'};
 char preOrder[] = {'l', 'd', 'g', 'h', 'e', 'a', 'k', 'i', 'c'};
@@ -47,22 +39,22 @@ bool insertCheck(CharBinaryTree *bt)
     //								  	   g		 h           a      k
     //                                                                i   c
     bool result = true;
-    CharBinaryTree::BinaryTreeNode btnHeaderRoot = bt->getHeaderRootNode().getRightChild();
+    IPPS23RBBTN *btnHeaderRoot = bt->getHeaderRootNode()->getLeftChild();
 
     //------------------------------------
     bt->insertRootNode('a');
-    CharBinaryTree::BinaryTreeNode btna = bt->getRootNode();
+    IPPS23RBBTN *btna = bt->getRootNode();
 
     //------------------------------------
     bt->insertLeftChild(btna, 'l');
-    CharBinaryTree::BinaryTreeNode btnl = btna.getLeftChild();
+    IPPS23RBBTN *btnl = btna->getLeftChild();
 
     //------------------------------------
     bt->insertLeftChild(btnl, 'd');
-    CharBinaryTree::BinaryTreeNode btnd = btnl.getLeftChild();
+    IPPS23RBBTN *btnd = btnl->getLeftChild();
 
-    if (bt->getLeftSize(btnl) != 1 || bt->getLeftSize(btna) != 0 ||
-        bt->getLeftSize(btna) != 0)
+    if (btnl->getLeftSize() != 1 || btna->getLeftSize() != 0 ||
+        btna->getLeftSize() != 0)
     {
         result = false;
         return result;
@@ -70,8 +62,8 @@ bool insertCheck(CharBinaryTree *bt)
 
     //------------------------------------
     bt->insertRightChild(btna, 'c');
-    CharBinaryTree::BinaryTreeNode btnc = btna.getRightChild();
-    if (bt->getLeftSize(btnc) != 0 || bt->getLeftSize(btna) != 0)
+    IPPS23RBBTN *btnc = btna->getRightChild();
+    if (btnc->getLeftSize() != 0 || btna->getLeftSize() != 0)
     {
         result = false;
         return result;
@@ -79,9 +71,9 @@ bool insertCheck(CharBinaryTree *bt)
 
     //------------------------------------
     bt->insertLeftChild(btnc, 'e');
-    CharBinaryTree::BinaryTreeNode btne = btnl.getRightChild();
-    if (bt->getLeftSize(btne) != 1 || bt->getLeftSize(btna) != 0 ||
-        bt->getLeftSize(btnc) != 0)
+    IPPS23RBBTN *btne = btnl->getRightChild();
+    if (btne->getLeftSize() != 1 || btna->getLeftSize() != 0 ||
+        btnc->getLeftSize() != 0)
     {
         result = false;
         return result;
@@ -89,8 +81,8 @@ bool insertCheck(CharBinaryTree *bt)
 
     //------------------------------------
     bt->insertLeftChild(btnc, 'i');
-    CharBinaryTree::BinaryTreeNode btni = btnc.getLeftChild();
-    if (bt->getLeftSize(btnc) != 1)
+    IPPS23RBBTN *btni = btnc->getLeftChild();
+    if (btnc->getLeftSize() != 1)
     {
         result = false;
         return result;
@@ -98,9 +90,9 @@ bool insertCheck(CharBinaryTree *bt)
 
     //------------------------------------
     bt->insertLeftChild(btnd, 'g');
-    CharBinaryTree::BinaryTreeNode btng = btnd.getLeftChild();
-    if (bt->getLeftSize(btnl) != 2 || bt->getLeftSize(btnd) != 1 ||
-        bt->getLeftSize(btng) != 0)
+    IPPS23RBBTN *btng = btnd->getLeftChild();
+    if (btnl->getLeftSize() != 2 || btnd->getLeftSize() != 1 ||
+        btng->getLeftSize() != 0)
     {
         result = false;
         return result;
@@ -108,8 +100,8 @@ bool insertCheck(CharBinaryTree *bt)
 
     //------------------------------------
     bt->insertRightChild(btnd, 'h');
-    CharBinaryTree::BinaryTreeNode btnh = btnd.getRightChild();
-    if (bt->getLeftSize(btnl) != 3)
+    IPPS23RBBTN *btnh = btnd->getRightChild();
+    if (btnl->getLeftSize() != 3)
     {
         result = false;
         return result;
@@ -127,9 +119,9 @@ bool insertCheck(CharBinaryTree *bt)
 
     //------------------------------------
     bt->insertRightChild(btni, 'k');
-    CharBinaryTree::BinaryTreeNode btnk = btne.getRightChild();
-    if (bt->getLeftSize(btnk) != 1 || bt->getLeftSize(btnc) != 0 ||
-        bt->getLeftSize(btni) != 0)
+    IPPS23RBBTN *btnk = btne->getRightChild();
+    if (btnk->getLeftSize() != 1 || btnc->getLeftSize() != 0 ||
+        btni->getLeftSize() != 0)
     {
         result = false;
         return result;
@@ -147,21 +139,21 @@ bool deleteCheck(CharBinaryTree *bt)
     //										/		\        	  /   \
     //								  	   g		 h           a      k
     //                                                                i   c
-    CharBinaryTree::BinaryTreeNode mPostOrderEnd = bt->getHeaderRootNode().getLeftChild();
-    CharBinaryTree::BinaryTreeNode btnl = bt->getRootNode();
-    CharBinaryTree::BinaryTreeNode btne = btnl.getRightChild();
-    CharBinaryTree::BinaryTreeNode btna = btne.getLeftChild();
-    CharBinaryTree::BinaryTreeNode btnk = btne.getRightChild();
-    CharBinaryTree::BinaryTreeNode btni = btnk.getLeftChild();
-    CharBinaryTree::BinaryTreeNode btnc = btnk.getRightChild();
-    CharBinaryTree::BinaryTreeNode btnd = btnl.getLeftChild();
-    CharBinaryTree::BinaryTreeNode btnh = btnd.getRightChild();
-    CharBinaryTree::BinaryTreeNode btng = btnd.getLeftChild();
+    IPPS23RBBTN *mPostOrderEnd = bt->getHeaderRootNode()->getLeftChild();
+    IPPS23RBBTN *btnl = bt->getRootNode();
+    IPPS23RBBTN *btne = btnl->getRightChild();
+    IPPS23RBBTN *btna = btne->getLeftChild();
+    IPPS23RBBTN *btnk = btne->getRightChild();
+    IPPS23RBBTN *btni = btnk->getLeftChild();
+    IPPS23RBBTN *btnc = btnk->getRightChild();
+    IPPS23RBBTN *btnd = btnl->getLeftChild();
+    IPPS23RBBTN *btnh = btnd->getRightChild();
+    IPPS23RBBTN *btng = btnd->getLeftChild();
 
     bt->deleteLeftChild(btne);
 
-    if (btnk.getParent() != btnl || btne.getParent() != btnk ||
-        btni.getParent() != btne || bt->getColor(btni) != 0)
+    if (btnk->getParent() != btnl || btne->getParent() != btnk ||
+        btni->getParent() != btne || btni->getColor() != 0)
     {
         result = false;
         return result;
@@ -170,8 +162,8 @@ bool deleteCheck(CharBinaryTree *bt)
     bt->deleteRightChild(mPostOrderEnd);
     btnh = btnl;
 
-    if (btnh.getParent() != mPostOrderEnd || btnk.getParent() != btnh ||
-        bt->getColor(btng) != 0 || bt->getColor(btnk) != 0)
+    if (btnh->getParent() != mPostOrderEnd || btnk->getParent() != btnh ||
+        btng->getColor() != 0 || btnk->getColor() != 0)
     {
         result = false;
         return result;
@@ -179,9 +171,9 @@ bool deleteCheck(CharBinaryTree *bt)
 
     bt->deleteRightChild(btnk);
 
-    if (btni.getParent() != btnh || btnk.getParent() != btni ||
-        btne.getParent() != btni || bt->getColor(btni) != 0 ||
-        bt->getColor(btne) != 1 || bt->getColor(btnk) != 1)
+    if (btni->getParent() != btnh || btnk->getParent() != btni ||
+        btne->getParent() != btni || btni->getColor() != 0 ||
+        btne->getColor() != 1 || btnk->getColor() != 1)
     {
         result = false;
         return result;
@@ -391,8 +383,8 @@ bool colorCheck(CharBinaryTree *bt, int status)
     {
         if (status == 0)
         {
-            cout << bt->getColor(itr.getBinaryTreeNode()) << "\t" << color[i] << endl;
-            if (bt->getColor(itr.getBinaryTreeNode()) != color[i])
+            cout << itr.getBinaryTreeNode()->getColor() << "\t" << color[i] << endl;
+            if (itr.getBinaryTreeNode()->getColor() != color[i])
             {
                 result = false;
                 break;
@@ -400,8 +392,8 @@ bool colorCheck(CharBinaryTree *bt, int status)
         }
         else
         {
-            cout << bt->getColor(itr.getBinaryTreeNode()) << "\t" << colorAfterDelete[i] << endl;
-            if (bt->getColor(itr.getBinaryTreeNode()) != colorAfterDelete[i])
+            cout << itr.getBinaryTreeNode()->getColor() << "\t" << colorAfterDelete[i] << endl;
+            if (itr.getBinaryTreeNode()->getColor() != colorAfterDelete[i])
             {
                 result = false;
                 break;
@@ -435,8 +427,8 @@ bool leftSizeCheck(CharBinaryTree *bt, int status)
     {
         if (status == 0)
         {
-            cout << bt->getLeftSize(itr.getBinaryTreeNode()) << "\t" << leftSize[i] << endl;
-            if (bt->getLeftSize(itr.getBinaryTreeNode()) != leftSize[i])
+            cout << itr.getBinaryTreeNode()->getLeftSize() << "\t" << leftSize[i] << endl;
+            if (itr.getBinaryTreeNode()->getLeftSize() != leftSize[i])
             {
                 result = false;
                 break;
@@ -444,8 +436,8 @@ bool leftSizeCheck(CharBinaryTree *bt, int status)
         }
         else
         {
-            cout << bt->getLeftSize(itr.getBinaryTreeNode()) << "\t" << leftSizeAfterDelete[i] << endl;
-            if (bt->getLeftSize(itr.getBinaryTreeNode()) != leftSizeAfterDelete[i])
+            cout << itr.getBinaryTreeNode()->getLeftSize() << "\t" << leftSizeAfterDelete[i] << endl;
+            if (itr.getBinaryTreeNode()->getLeftSize() != leftSizeAfterDelete[i])
             {
                 result = false;
                 break;
@@ -480,7 +472,6 @@ int main()
             cout << endl
                  << "0: insert" << endl;
             result = insertCheck(bt);
-            bt->setNodeDisplayWidth(1); // we can delete mNodeDisplayWidth
             bt->draw(cout);
             cout << endl;
             break;
