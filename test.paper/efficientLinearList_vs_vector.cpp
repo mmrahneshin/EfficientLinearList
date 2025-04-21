@@ -133,7 +133,7 @@ int main()
     EfficientLinearList<int> *ell;
     vector<int> *vec;
     cout << "The test has started now with " << size << " insertions and " << size / 2 << " deletions:" << endl;
-    for (input = 0; input < 2; input++)
+    for (input = 0; input < 6; input++)
     {
         switch (input)
         {

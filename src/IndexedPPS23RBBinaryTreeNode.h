@@ -2,6 +2,8 @@
 // Author: Kamaledin Ghiasi-Shirazi, Mohammad Mahdi Rahneshin
 
 #pragma once
+template <class T>
+class EfficientLinearList;
 
 template <class T>
 class IndexedPPS23RedBlackBinaryTree;
@@ -9,7 +11,7 @@ class IndexedPPS23RedBlackBinaryTree;
 template <class T>
 class IndexedPPS23RBBinaryTreeNode
 {
-public:
+private:
 	enum COLOR
 	{
 		RED = 0,
@@ -28,6 +30,9 @@ public:
 	virtual ~IndexedPPS23RBBinaryTreeNode(void)
 	{
 	}
+
+	friend class IndexedPPS23RedBlackBinaryTree<T>;
+	friend class EfficientLinearList<T>;
 
 	enum COLOR mColor;
 	T mData;

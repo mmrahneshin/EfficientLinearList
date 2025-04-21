@@ -10,26 +10,9 @@ template <class T>
 class IndexedPPS23RedBlackBinaryTree
 {
 	typedef IndexedPPS23RBBinaryTreeNode<T> IPPS23RBBTN;
+	friend class EfficientLinearList<T>;
 
 public:
-	//
-	IPPS23RBBTN *mInOrderPreBegin;
-	IPPS23RBBTN *mPostOrderPreBegin;
-	IPPS23RBBTN *mRevInOrderPreBegin;
-	IPPS23RBBTN *mPreOrderPreBegin;
-	IPPS23RBBTN *mRevPreOrderPreBegin;
-	IPPS23RBBTN *mRevPostOrderPreBegin;
-
-	IPPS23RBBTN *mRevInOrderEnd;
-	IPPS23RBBTN *mRevPostOrderEnd;
-	IPPS23RBBTN *mInOrderEnd;
-	IPPS23RBBTN *mRevPreOrderEnd;
-	IPPS23RBBTN *mPreOrderEnd;
-	IPPS23RBBTN *mPostOrderEnd;
-	IPPS23RBBTN *mNilSentinel;
-	IPPS23RBBTN *mLastInOrderNode;
-	int mSize;
-
 	IndexedPPS23RedBlackBinaryTree(void)
 	{
 		mSize = 0;
@@ -69,33 +52,25 @@ public:
 		mPostOrderEnd->mLeftSize = -1;
 	}
 
-	// caution: don't interpret virtual destructor as an ordinary virtual function!
-	virtual ~IndexedPPS23RedBlackBinaryTree(void)
+	// caution: don't interpret destructor as an ordinary function!
+	~IndexedPPS23RedBlackBinaryTree(void)
 	{
 		DeleteSubtree(mInOrderEnd);
 		delete mNilSentinel;
 	}
 
 	int size() { return mSize; }
-	void DeleteSubtree(IPPS23RBBTN *node)
-	{
-		if (node->mLeftChild != mNilSentinel)
-			DeleteSubtree(node->mLeftChild);
-		if (node->mRightChild != mNilSentinel)
-			DeleteSubtree(node->mRightChild);
-		delete node;
-	}
 
 	bool isEmpty()
 	{
 		return mPostOrderEnd->mRightChild == mNilSentinel;
 	}
 
-	virtual bool hasLeftChild(IPPS23RBBTN *node) const { return node->mLeftChild != mNilSentinel; }
+	bool hasLeftChild(IPPS23RBBTN *node) const { return node->mLeftChild != mNilSentinel; }
 
-	virtual bool hasRightChild(IPPS23RBBTN *node) const { return node->mRightChild != mNilSentinel; }
+	bool hasRightChild(IPPS23RBBTN *node) const { return node->mRightChild != mNilSentinel; }
 
-	virtual void insertLastInOrderNode(T data)
+	void insertLastInOrderNode(T data)
 	{
 		IPPS23RBBTN *childNode = new IPPS23RBBTN;
 		childNode->mData = data;
@@ -112,7 +87,7 @@ public:
 		put_bottom_up_pass(childNode);
 	}
 	// error if a left child already exists.
-	virtual void insertLeftChild(IPPS23RBBTN *parentNode, T data)
+	void insertLeftChild(IPPS23RBBTN *parentNode, T data)
 	{
 		// Write your code here
 		if (parentNode)
@@ -136,7 +111,7 @@ public:
 	}
 
 	// error if a right child already exists.
-	virtual void insertRightChild(IPPS23RBBTN *parentNode, T data)
+	void insertRightChild(IPPS23RBBTN *parentNode, T data)
 	{
 		// Write your code here
 		if (parentNode)
@@ -159,7 +134,131 @@ public:
 			throw std::runtime_error("Invalid Pointer.");
 	}
 
-	void updateLeftSize(IPPS23RBBTN *iNode, int diff)
+	class Iterator
+	{
+	public:
+		Iterator(IPPS23RBBTN *currentNode, IPPS23RBBTN *nil) : mCurrentNode(currentNode), mNilSentinel(nil) {}
+		T &operator*() { return mCurrentNode->mData; }
+		T *operator->() { return &mCurrentNode->mData; }
+		bool operator==(Iterator &itr) { return mCurrentNode == itr.mCurrentNode; }
+		bool operator!=(Iterator &itr) { return mCurrentNode != itr.mCurrentNode; }
+		void operator++() = 0;
+		void operator--() = 0;
+		IPPS23RBBTN *getBinaryTreeNode() { return mCurrentNode; }
+
+	protected:
+		IPPS23RBBTN *mCurrentNode;
+		IPPS23RBBTN *mNilSentinel;
+		friend class IndexedPPS23RedBlackBinaryTree<T>;
+	};
+	class InOrderIterator : public Iterator
+	{
+	public:
+		InOrderIterator(IPPS23RBBTN *currentNode, IPPS23RBBTN *nil) : Iterator(currentNode, nil) {}
+		void operator++()
+		{
+			// Write your code here
+			IPPS23RBBTN *theNode = this->mCurrentNode;
+			if (theNode->mRightChild != this->mNilSentinel)
+			{
+				theNode = theNode->mRightChild;
+				while (theNode->mLeftChild != this->mNilSentinel)
+				{
+					theNode = theNode->mLeftChild;
+				}
+			}
+			else
+			{
+				IPPS23RBBTN *lastNode = theNode;
+				do
+				{
+					lastNode = theNode;
+					theNode = theNode->mParent;
+				} while (theNode->mLeftChild != lastNode);
+			}
+			this->mCurrentNode = theNode;
+		}
+		void operator--()
+		{
+			// Write your code here
+			IPPS23RBBTN *theNode = this->mCurrentNode;
+			if (theNode->mLeftChild != this->mNilSentinel)
+			{
+				theNode = theNode->mLeftChild;
+				while (theNode->mRightChild != this->mNilSentinel)
+				{
+					theNode = theNode->mRightChild;
+				}
+			}
+			else
+			{
+				IPPS23RBBTN *lastNode = theNode;
+				do
+				{
+					lastNode = theNode;
+					theNode = theNode->mParent;
+				} while (theNode->mRightChild != lastNode);
+			}
+			this->mCurrentNode = theNode;
+		}
+	};
+
+	//  void deleteLeftChild(IPPS23RBBTN *node)
+	// {
+	// 	IPPS23RBBTN *theParent = node;
+	// 	IPPS23RBBTN *theNode = theParent->mLeftChild;
+	// 	deleteNode(theNode, theParent);
+	// }
+	//  void deleteRightChild(IPPS23RBBTN *node)
+	// {
+	// 	IPPS23RBBTN *theParent = node;
+	// 	IPPS23RBBTN *theNode = theParent->mRightChild;
+	// 	deleteNode(theNode, theParent);
+	// }
+
+	InOrderIterator inOrderBegin()
+	{
+		// Write your code here
+		IPPS23RBBTN *theNode = mInOrderPreBegin;
+		InOrderIterator itr(theNode, mNilSentinel);
+		++itr;
+		return itr;
+	}
+
+	InOrderIterator inOrderEnd()
+	{
+		return InOrderIterator(mInOrderEnd, mNilSentinel);
+	}
+
+private:
+	//
+	IPPS23RBBTN *mInOrderPreBegin;
+	IPPS23RBBTN *mPostOrderPreBegin;
+	IPPS23RBBTN *mRevInOrderPreBegin;
+	IPPS23RBBTN *mPreOrderPreBegin;
+	IPPS23RBBTN *mRevPreOrderPreBegin;
+	IPPS23RBBTN *mRevPostOrderPreBegin;
+
+	IPPS23RBBTN *mRevInOrderEnd;
+	IPPS23RBBTN *mRevPostOrderEnd;
+	IPPS23RBBTN *mInOrderEnd;
+	IPPS23RBBTN *mRevPreOrderEnd;
+	IPPS23RBBTN *mPreOrderEnd;
+	IPPS23RBBTN *mPostOrderEnd;
+	IPPS23RBBTN *mNilSentinel;
+	IPPS23RBBTN *mLastInOrderNode;
+	int mSize;
+
+	void DeleteSubtree(IPPS23RBBTN *node)
+	{
+		if (node->mLeftChild != mNilSentinel)
+			DeleteSubtree(node->mLeftChild);
+		if (node->mRightChild != mNilSentinel)
+			DeleteSubtree(node->mRightChild);
+		delete node;
+	}
+
+	inline void updateLeftSize(IPPS23RBBTN *iNode, int diff)
 	{
 		while (iNode->mParent)
 		{
@@ -169,7 +268,7 @@ public:
 		}
 	}
 
-	virtual void updateAfterRR(IPPS23RBBTN *node)
+	inline void updateAfterRR(IPPS23RBBTN *node)
 	{
 		// IndexedPPS23RB updateAfterRR(node);
 		IPPS23RBBTN *A = node->mLeftChild;
@@ -181,7 +280,7 @@ public:
 		node->mLeftChild->mColor = c;
 	}
 
-	IPPS23RBBTN *RR(IPPS23RBBTN *A)
+	inline IPPS23RBBTN *RR(IPPS23RBBTN *A)
 	{
 		// write your code here
 		IPPS23RBBTN *B = A->mRightChild;
@@ -210,7 +309,7 @@ public:
 		return B;
 	}
 
-	virtual void updateAfterLL(IPPS23RBBTN *node)
+	inline void updateAfterLL(IPPS23RBBTN *node)
 	{
 		// IndexedPPS23RB updateAfterLL(node);
 		IPPS23RBBTN *A = node->mRightChild;
@@ -229,7 +328,7 @@ public:
 		node->mRightChild->mColor = c;
 	}
 
-	IPPS23RBBTN *LL(IPPS23RBBTN *A)
+	inline IPPS23RBBTN *LL(IPPS23RBBTN *A)
 	{
 		// write your code here
 		IPPS23RBBTN *B = A->mLeftChild;
@@ -256,7 +355,7 @@ public:
 		return B;
 	}
 
-	IPPS23RBBTN *getActualDeleteNode(IPPS23RBBTN *node)
+	inline IPPS23RBBTN *getActualDeleteNode(IPPS23RBBTN *node)
 	{
 		IPPS23RBBTN *actualDeleteNode = node->mLeftChild;
 		while (actualDeleteNode->mRightChild != this->mNilSentinel)
@@ -266,7 +365,7 @@ public:
 		return actualDeleteNode;
 	}
 
-	virtual void put_bottom_up_pass(IPPS23RBBTN *deficientNode)
+	inline void put_bottom_up_pass(IPPS23RBBTN *deficientNode)
 	{
 		IPPS23RBBTN *parentNode, *siblingNode;
 		while (true) // deficientNode->mColor is certainly BLACK
@@ -306,7 +405,7 @@ public:
 			deficientNode->mColor = IPPS23RBBTN::RED;		   // Rule (a.1)
 	}
 
-	void remove_bottom_up_pass(IPPS23RBBTN *x)
+	inline void remove_bottom_up_pass(IPPS23RBBTN *x)
 	{
 		while (x != this->mPostOrderEnd->mRightChild && x->mColor == IPPS23RBBTN::BLACK)
 		{
@@ -315,7 +414,7 @@ public:
 		x->mColor = IPPS23RBBTN::BLACK; // Parity-seeking Rule (a)
 	}
 
-	IPPS23RBBTN *applyParitySeekingRules(IPPS23RBBTN *x)
+	inline IPPS23RBBTN *applyParitySeekingRules(IPPS23RBBTN *x)
 	{
 		IPPS23RBBTN *p = x->mParent;
 		IPPS23RBBTN *y = x == p->mLeftChild ? p->mRightChild : p->mLeftChild;
@@ -333,7 +432,7 @@ public:
 		return x;
 	}
 
-	IPPS23RBBTN *fixUp(IPPS23RBBTN *x, IPPS23RBBTN *z)
+	inline IPPS23RBBTN *fixUp(IPPS23RBBTN *x, IPPS23RBBTN *z)
 	{
 		if (z->mLeftChild->mColor == IPPS23RBBTN::RED || z->mRightChild->mColor == IPPS23RBBTN::RED)
 		{
@@ -356,7 +455,7 @@ public:
 		return x;
 	}
 
-	virtual void updateAfterInsert(IPPS23RBBTN *node)
+	inline void updateAfterInsert(IPPS23RBBTN *node)
 	{
 		// IndexedBT updateAfterInsert(node);
 		updateLeftSize(node, 1);
@@ -364,7 +463,7 @@ public:
 		put_bottom_up_pass(node);
 	}
 
-	virtual void updateBeforeDelete(IPPS23RBBTN *node)
+	inline void updateBeforeDelete(IPPS23RBBTN *node)
 	{
 		// IndexedBT updateBeforeDelete(node);
 		updateLeftSize(node, -1);
@@ -378,7 +477,7 @@ public:
 		}
 	}
 
-	virtual void updateAfterDelete(IPPS23RBBTN *node)
+	inline void updateAfterDelete(IPPS23RBBTN *node)
 	{
 		if ((node->mLeftChild != this->mNilSentinel && node->mRightChild == this->mNilSentinel) ||
 			(node->mLeftChild == this->mNilSentinel && node->mRightChild != this->mNilSentinel))
@@ -388,14 +487,14 @@ public:
 		this->mNilSentinel->mParent = 0;
 	}
 
-	virtual void deleteDeg2Node(IPPS23RBBTN *node)
+	inline void deleteDeg2Node(IPPS23RBBTN *node)
 	{
 		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(node);
 		node->mData = actualDeleteNode->mData; // از استاد در مورد جایگاه این کد پرسیده شود
 		this->deleteNode(actualDeleteNode);
 	}
 	// If a degree-1 node is deleted, it is replaced by its subtree.
-	virtual void deleteNode(IPPS23RBBTN *theNode)
+	inline void deleteNode(IPPS23RBBTN *theNode)
 	{
 		IPPS23RBBTN *theParent = theNode->mParent;
 		// Write your code here
@@ -431,7 +530,7 @@ public:
 		}
 	}
 
-	virtual void deleteLastInOrderNode()
+	inline void deleteLastInOrderNode()
 	{
 		IPPS23RBBTN *theParent = mLastInOrderNode->mParent;
 
@@ -467,382 +566,4 @@ public:
 		}
 		this->mNilSentinel->mParent = 0;
 	}
-
-	// class Iterator
-	// {
-	// public:
-	// 	Iterator(IPPS23RBBTN *currentNode, IPPS23RBBTN *nil) : mCurrentNode(currentNode), mNilSentinel(nil) {}
-	// 	virtual T &operator*() { return mCurrentNode->mData; }
-	// 	virtual T *operator->() { return &mCurrentNode->mData; }
-	// 	virtual bool operator==(Iterator &itr) { return mCurrentNode == itr.mCurrentNode; }
-	// 	virtual bool operator!=(Iterator &itr) { return mCurrentNode != itr.mCurrentNode; }
-	// 	virtual void operator++() = 0;
-	// 	virtual void operator--() = 0;
-	// 	virtual IPPS23RBBTN *getBinaryTreeNode() { return mCurrentNode; }
-	// protected:
-	// 	IPPS23RBBTN *mCurrentNode;
-	// 	IPPS23RBBTN *mNilSentinel;
-	// 	friend class IndexedPPS23RedBlackBinaryTree<T>;
-	// };
-	// class InOrderIterator : public Iterator
-	// {
-	// public:
-	// 	InOrderIterator(IPPS23RBBTN *currentNode, IPPS23RBBTN *nil) : Iterator(currentNode, nil) {}
-	// 	virtual void operator++()
-	// 	{
-	// 		// Write your code here
-	// 		IPPS23RBBTN *theNode = this->mCurrentNode;
-	// 		if (theNode->mRightChild != this->mNilSentinel)
-	// 		{
-	// 			theNode = theNode->mRightChild;
-	// 			while (theNode->mLeftChild != this->mNilSentinel)
-	// 			{
-	// 				theNode = theNode->mLeftChild;
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			IPPS23RBBTN *lastNode = theNode;
-	// 			do
-	// 			{
-	// 				lastNode = theNode;
-	// 				theNode = theNode->mParent;
-	// 			} while (theNode->mLeftChild != lastNode);
-	// 		}
-	// 		this->mCurrentNode = theNode;
-	// 	}
-	// 	virtual void operator--()
-	// 	{
-	// 		// Write your code here
-	// 		IPPS23RBBTN *theNode = this->mCurrentNode;
-	// 		if (theNode->mLeftChild != this->mNilSentinel)
-	// 		{
-	// 			theNode = theNode->mLeftChild;
-	// 			while (theNode->mRightChild != this->mNilSentinel)
-	// 			{
-	// 				theNode = theNode->mRightChild;
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			IPPS23RBBTN *lastNode = theNode;
-	// 			do
-	// 			{
-	// 				lastNode = theNode;
-	// 				theNode = theNode->mParent;
-	// 			} while (theNode->mRightChild != lastNode);
-	// 		}
-	// 		this->mCurrentNode = theNode;
-	// 	}
-	// };
-	// class PreOrderIterator : public Iterator
-	// {
-	// public:
-	// 	PreOrderIterator(IPPS23RBBTN *currentNode, IPPS23RBBTN *nil) : Iterator(currentNode, nil) {}
-	// 	virtual void operator++()
-	// 	{
-	// 		// Write your code here
-	// 		IPPS23RBBTN *theNode = this->mCurrentNode;
-	// 		if (theNode->mLeftChild != this->mNilSentinel)
-	// 		{
-	// 			theNode = theNode->mLeftChild;
-	// 		}
-	// 		else if (theNode->mRightChild != this->mNilSentinel)
-	// 		{
-	// 			theNode = theNode->mRightChild;
-	// 		}
-	// 		else
-	// 		{
-	// 			IPPS23RBBTN *lastNode = theNode;
-	// 			do
-	// 			{
-	// 				lastNode = theNode;
-	// 				theNode = theNode->mParent;
-	// 			} while (theNode->mLeftChild != lastNode || theNode->mRightChild == this->mNilSentinel);
-	// 			theNode = theNode->mRightChild;
-	// 		}
-	// 		this->mCurrentNode = theNode;
-	// 	}
-	// 	virtual void operator--()
-	// 	{
-	// 		// Write your code here
-	// 		IPPS23RBBTN *theNode = this->mCurrentNode;
-	// 		IPPS23RBBTN *theParent = theNode->mParent;
-	// 		if (theParent->mLeftChild == theNode || (theParent->mRightChild == theNode && theParent->mLeftChild == this->mNilSentinel))
-	// 			theNode = theParent;
-	// 		else
-	// 		{
-	// 			theNode = theParent->mLeftChild;
-	// 			while (true)
-	// 			{
-	// 				if (theNode->mRightChild != this->mNilSentinel)
-	// 				{
-	// 					theNode = theNode->mRightChild;
-	// 				}
-	// 				else if (theNode->mLeftChild != this->mNilSentinel)
-	// 				{
-	// 					theNode = theNode->mLeftChild;
-	// 				}
-	// 				else
-	// 					break;
-	// 			}
-	// 		}
-	// 		this->mCurrentNode = theNode;
-	// 	}
-	// };
-	// class PostOrderIterator : public Iterator
-	// {
-	// public:
-	// 	PostOrderIterator(IPPS23RBBTN *currentNode, IPPS23RBBTN *nil) : Iterator(currentNode, nil) {}
-	// 	virtual void operator++()
-	// 	{
-	// 		// Write your code here
-	// 		IPPS23RBBTN *theNode = this->mCurrentNode;
-	// 		IPPS23RBBTN *theParent = theNode->mParent;
-	// 		if (theParent->mRightChild == theNode || (theParent->mLeftChild == theNode && theParent->mRightChild == this->mNilSentinel))
-	// 			theNode = theParent;
-	// 		else
-	// 		{
-	// 			theNode = theParent->mRightChild;
-	// 			while (true)
-	// 			{
-	// 				if (theNode->mLeftChild != this->mNilSentinel)
-	// 				{
-	// 					theNode = theNode->mLeftChild;
-	// 				}
-	// 				else if (theNode->mRightChild != this->mNilSentinel)
-	// 				{
-	// 					theNode = theNode->mRightChild;
-	// 				}
-	// 				else
-	// 					break;
-	// 			}
-	// 		}
-	// 		this->mCurrentNode = theNode;
-	// 	}
-	// 	virtual void operator--()
-	// 	{
-	// 		// Write your code here
-	// 		IPPS23RBBTN *theNode = this->mCurrentNode;
-	// 		if (theNode->mRightChild != this->mNilSentinel)
-	// 		{
-	// 			theNode = theNode->mRightChild;
-	// 		}
-	// 		else if (theNode->mLeftChild != this->mNilSentinel)
-	// 		{
-	// 			theNode = theNode->mLeftChild;
-	// 		}
-	// 		else
-	// 		{
-	// 			IPPS23RBBTN *lastNode = theNode;
-	// 			do
-	// 			{
-	// 				lastNode = theNode;
-	// 				theNode = theNode->mParent;
-	// 			} while (theNode->mRightChild != lastNode || theNode->mLeftChild == this->mNilSentinel);
-	// 			theNode = theNode->mLeftChild;
-	// 		}
-	// 		this->mCurrentNode = theNode;
-	// 	}
-	// };
-
-	// virtual void insertRootNode(T data)
-	// {
-	// 	IPPS23RBBTN *root;
-	// 	if (mPostOrderEnd->mRightChild != mNilSentinel)
-	// 		throw std::runtime_error("Error: Root already exists.");
-	// 	root = new IPPS23RBBTN;
-	// 	root->mData = data;
-	// 	root->mParent = mPostOrderEnd;
-	// 	mPostOrderEnd->mRightChild = root;
-	// 	root->mLeftChild = mNilSentinel;
-	// 	root->mRightChild = mNilSentinel;
-	// 	mSize = 1;
-	// 	updateAfterInsert(mPostOrderEnd->mRightChild);
-	// }
-	// virtual IPPS23RBBTN *getRootNode() { return mPostOrderEnd->mRightChild; }
-	// virtual IPPS23RBBTN *getHeaderRootNode() { return mInOrderEnd; }
-
-	// virtual void deleteLeftChild(IPPS23RBBTN *node)
-	// {
-	// 	IPPS23RBBTN *theParent = node;
-	// 	IPPS23RBBTN *theNode = theParent->mLeftChild;
-	// 	deleteNode(theNode, theParent);
-	// }
-	// virtual void deleteRightChild(IPPS23RBBTN *node)
-	// {
-	// 	IPPS23RBBTN *theParent = node;
-	// 	IPPS23RBBTN *theNode = theParent->mRightChild;
-	// 	deleteNode(theNode, theParent);
-	// }
-
-	// virtual InOrderIterator inOrderBegin()
-	// {
-	// 	// Write your code here
-	// 	IPPS23RBBTN *theNode = mInOrderPreBegin;
-	// 	InOrderIterator itr(theNode, mNilSentinel);
-	// 	++itr;
-	// 	return itr;
-	// }
-	// virtual InOrderIterator inOrderEnd()
-	// {
-	// 	return InOrderIterator(mInOrderEnd, mNilSentinel);
-	// }
-	// virtual InOrderIterator inOrderReverseBegin()
-	// {
-	// 	// Write your code here
-	// 	IPPS23RBBTN *theNode = mRevInOrderPreBegin;
-	// 	InOrderIterator itr(theNode, mNilSentinel);
-	// 	--itr;
-	// 	return itr;
-	// }
-	// virtual InOrderIterator inOrderReverseEnd()
-	// {
-	// 	return InOrderIterator(mRevInOrderEnd, mNilSentinel);
-	// }
-	// virtual PreOrderIterator preOrderBegin()
-	// {
-	// 	// Write your code here
-	// 	IPPS23RBBTN *theNode = mPreOrderPreBegin;
-	// 	PreOrderIterator itr(theNode, mNilSentinel);
-	// 	++itr;
-	// 	return itr;
-	// }
-	// virtual PreOrderIterator preOrderEnd()
-	// {
-	// 	return PreOrderIterator(mPreOrderEnd, mNilSentinel);
-	// }
-	// virtual PreOrderIterator preOrderReverseBegin()
-	// {
-	// 	// Write your code here
-	// 	IPPS23RBBTN *theNode = mRevPreOrderPreBegin;
-	// 	PreOrderIterator itr(theNode, mNilSentinel);
-	// 	--itr;
-	// 	return itr;
-	// }
-	// virtual PreOrderIterator preOrderReverseEnd()
-	// {
-	// 	return PreOrderIterator(mRevPreOrderEnd, mNilSentinel);
-	// }
-	// virtual PostOrderIterator postOrderBegin()
-	// {
-	// 	// Write your code here
-	// 	IPPS23RBBTN *theNode = mPostOrderPreBegin;
-	// 	PostOrderIterator itr(theNode, mNilSentinel);
-	// 	++itr;
-	// 	return itr;
-	// }
-	// virtual PostOrderIterator postOrderEnd()
-	// {
-	// 	return PostOrderIterator(mPostOrderEnd, mNilSentinel);
-	// }
-	// virtual PostOrderIterator postOrderReverseBegin()
-	// {
-	// 	// Write your code here
-	// 	IPPS23RBBTN *theNode = mRevPostOrderPreBegin;
-	// 	PostOrderIterator itr(theNode, mNilSentinel);
-	// 	--itr;
-	// 	return itr;
-	// }
-	// virtual PostOrderIterator postOrderReverseEnd()
-	// {
-	// 	return PostOrderIterator(mRevPostOrderEnd, mNilSentinel);
-	// }
-
-	// // This function is solely written to work on small binary trees.The code has many other known limitations.
-	// void draw(std::ostream &out)
-	// {
-	// 	if (mSize == 0)
-	// 		return;
-	// 	int maxDepth = 9;
-	// 	int depth = depthCalc(mPostOrderEnd->mRightChild, 1);
-	// 	depth = depth * 2 - 1;
-	// 	if (depth > maxDepth)
-	// 	{
-	// 		out << "Can't draw, the height of the tree is greater than " << (maxDepth + 1) / 2 << "\n";
-	// 		return;
-	// 	}
-	// 	T **dataMap = new T *[depth];
-	// 	char **linesMap = new char *[depth];
-	// 	for (int i = 0; i < depth; i++)
-	// 	{
-	// 		dataMap[i] = new T[80];
-	// 		linesMap[i] = new char[80];
-	// 		for (int j = 0; j < 80; j++)
-	// 		{
-	// 			dataMap[i][j] = T();
-	// 			linesMap[i][j] = ' ';
-	// 		}
-	// 	}
-	// 	recursiveDraw(mPostOrderEnd->mRightChild, dataMap, linesMap, 40, 0);
-	// 	for (int i = 0; i < depth; i++)
-	// 		for (int j = 0; j < 80; j++)
-	// 		{
-	// 			if (dataMap[i][j] != T())
-	// 			{
-	// 				out << dataMap[i][j];
-	// 			}
-	// 			else
-	// 			{
-	// 				out << linesMap[i][j];
-	// 			}
-	// 		}
-	// 	for (int i = 0; i < depth; i++)
-	// 	{
-	// 		delete[] dataMap[i];
-	// 		delete[] linesMap[i];
-	// 	}
-	// 	delete[] dataMap;
-	// 	delete[] linesMap;
-	// }
-	// string toString()
-	// {
-	// 	std::ostringstream stream;
-	// 	this->draw(stream);
-	// 	return stream.str();
-	// }
-	// int depthCalc(IPPS23RBBTN *root, int depth)
-	// {
-	// 	if (mSize == 0)
-	// 	{
-	// 		return 0;
-	// 	}
-	// 	int res = depth;
-	// 	if (root->mRightChild != mNilSentinel)
-	// 	{
-	// 		int rightDepth = depthCalc(root->mRightChild, depth + 1);
-	// 		res = (res > rightDepth) ? res : rightDepth;
-	// 	}
-	// 	if (root->mLeftChild != mNilSentinel)
-	// 	{
-	// 		int leftDepth = depthCalc(root->mLeftChild, depth + 1);
-	// 		res = (res > leftDepth) ? res : leftDepth;
-	// 	}
-	// 	return res;
-	// }
-	// void recursiveDraw(IPPS23RBBTN *root, T **dataMap, char **linesMap, int x, int y)
-	// {
-	// 	int des = 1;
-	// 	for (int i = 0; i < y / 2 + 2; i++)
-	// 		des *= 2;
-	// 	des = 80 / des;
-	// 	// root:
-	// 	dataMap[y][x - 1 / 2] = root->mData; // we can delete mNodeDisplayWidth
-	// 	// left child:
-	// 	if (root->mLeftChild != mNilSentinel)
-	// 	{
-	// 		for (int i = 0; i < des; i++)
-	// 			linesMap[y + 1][x - i] = '-';
-	// 		linesMap[y + 1][x] = '|';
-	// 		recursiveDraw(root->mLeftChild, dataMap, linesMap, x - des, y + 2);
-	// 	}
-	// 	// right child:
-	// 	if (root->mRightChild != mNilSentinel)
-	// 	{
-	// 		for (int i = 0; i < des; i++)
-	// 			linesMap[y + 1][x + i] = '-';
-	// 		linesMap[y + 1][x] = '|';
-	// 		recursiveDraw(root->mRightChild, dataMap, linesMap, x + des, y + 2);
-	// 	}
-	// }
 };
