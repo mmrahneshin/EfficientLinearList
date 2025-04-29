@@ -16,17 +16,28 @@ public:
 		mIPPS23RBbt = new BT();
 	}
 
-	virtual ~EfficientLinearList(void)
+	~EfficientLinearList(void)
 	{
 		delete mIPPS23RBbt;
 	}
 
-public:
-	virtual void insert(const int &idx, const T &data)
+	void insert(const int &idx, const T &data)
 	{
 		if (idx < 0 || idx > mIPPS23RBbt->size())
 		{
 			throw std::runtime_error("out_of_range");
+		}
+
+		if (mIPPS23RBbt->size() == 0)
+		{
+			mIPPS23RBbt->insertRootNode(data);
+			return;
+		}
+
+		if (idx == 0)
+		{
+			mIPPS23RBbt->insertFirstInOrderNode(data);
+			return;
 		}
 
 		if (idx == mIPPS23RBbt->size())
@@ -48,18 +59,33 @@ public:
 			mIPPS23RBbt->insertRightChild(node, data);
 		}
 	}
+	// double getTimeTaken()
+	// {
+	// 	return mIPPS23RBbt->timeTaken;
+	// }
 
-	virtual T &operator[](const int &idx)
+	// double getRemoveTimeTaken()
+	// {
+	// 	return mIPPS23RBbt->removeTimeTaken;
+	// }
+
+	T &operator[](const int &idx)
 	{
 		IPPS23RBBTN *node = getNode(idx);
 		return node->mData;
 	}
 
-	virtual void remove(const int &idx)
+	void remove(const int &idx)
 	{
 		if (idx < 0 || idx >= mIPPS23RBbt->size())
 		{
 			throw std::runtime_error("out_of_range");
+		}
+
+		if (idx == 0)
+		{
+			mIPPS23RBbt->deleteFirstInOrderNode();
+			return;
 		}
 
 		if (idx == mIPPS23RBbt->size() - 1)
@@ -67,21 +93,21 @@ public:
 			mIPPS23RBbt->deleteLastInOrderNode();
 			return;
 		}
-
+		// cout << "#################" << endl;
 		IPPS23RBBTN *node = getNode(idx);
 		mIPPS23RBbt->deleteNode(node);
 	}
 
-	virtual int size() const
+	int size() const
 	{
 		return mIPPS23RBbt->size();
 	};
 
-	// virtual int depth() const
+	//  int depth() const
 	// {
 	// 	return mIPPS23RBbt->depthCalc(mIPPS23RBbt->getRootNode(), 1);
 	// };
-	// virtual void drawTree()
+	//  void drawTree()
 	// {
 	// 	mIPPS23RBbt->draw(cout);
 	// }
@@ -99,22 +125,33 @@ public:
 	// }
 
 private:
-	virtual IPPS23RBBTN *getNode(int idx)
+	inline IPPS23RBBTN *getNode(int idx)
 	{
 		IPPS23RBBTN *node = mIPPS23RBbt->mInOrderEnd;
-		while (node->mLeftSize != idx)
+		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
+		if (leftSize != idx)
 		{
-			if (idx < node->mLeftSize)
+			node = mIPPS23RBbt->mPostOrderEnd->mRightChild;
+		}
+		else
+			return node;
+
+		int leftOnly = 1;
+		leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
+		while (leftSize != idx)
+		{
+			if (idx < leftSize)
 			{
 				node = node->mLeftChild;
 			}
 			else
 			{
-				idx = idx - node->mLeftSize - 1;
+				leftOnly = 0;
+				idx = idx - leftSize - 1;
 				node = node->mRightChild;
 			}
+			leftSize = node->mLeftSize + (mIPPS23RBbt->mGlobalLeftSize * leftOnly);
 		}
-
 		return node;
 	}
 

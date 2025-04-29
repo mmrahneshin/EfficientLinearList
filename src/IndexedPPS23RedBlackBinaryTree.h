@@ -16,12 +16,13 @@ public:
 	IndexedPPS23RedBlackBinaryTree(void)
 	{
 		mSize = 0;
-		mNilSentinel = new IPPS23RBBTN;
-		mRevInOrderEnd = new IPPS23RBBTN;
-		mRevPostOrderEnd = new IPPS23RBBTN;
-		mInOrderEnd = new IPPS23RBBTN;
+		mGlobalLeftSize = 0;
+		mNilSentinel = new IPPS23RBBTN();
+		mRevInOrderEnd = new IPPS23RBBTN();
+		mRevPostOrderEnd = new IPPS23RBBTN();
+		mInOrderEnd = new IPPS23RBBTN();
 		mRevPreOrderEnd = mRevPostOrderEnd;
-		mPreOrderEnd = new IPPS23RBBTN;
+		mPreOrderEnd = new IPPS23RBBTN();
 		mPostOrderEnd = mRevInOrderEnd;
 
 		mRevPostOrderEnd->mParent = mRevInOrderEnd;
@@ -47,6 +48,7 @@ public:
 		mRevPostOrderPreBegin = mPostOrderEnd;
 
 		mLastInOrderNode = mPostOrderEnd;
+		mFirstInOrderNode = mPostOrderEnd;
 
 		mInOrderEnd->mLeftSize = 0;
 		mPostOrderEnd->mLeftSize = -1;
@@ -70,9 +72,29 @@ public:
 
 	bool hasRightChild(IPPS23RBBTN *node) const { return node->mRightChild != mNilSentinel; }
 
+	void insertRootNode(T data)
+	{
+		IPPS23RBBTN *root;
+		if (mPostOrderEnd->mRightChild != mNilSentinel)
+			throw std::runtime_error("Error: Root already exists.");
+		root = new IPPS23RBBTN();
+		root->mData = data;
+		root->mParent = mPostOrderEnd;
+		mPostOrderEnd->mRightChild = root;
+
+		root->mLeftChild = mNilSentinel;
+		root->mRightChild = mNilSentinel;
+
+		mLastInOrderNode = root;
+		mFirstInOrderNode = root;
+
+		mSize = 1;
+		mInOrderEnd->mLeftSize++;
+	}
+
 	void insertLastInOrderNode(T data)
 	{
-		IPPS23RBBTN *childNode = new IPPS23RBBTN;
+		IPPS23RBBTN *childNode = new IPPS23RBBTN();
 		childNode->mData = data;
 		childNode->mParent = mLastInOrderNode;
 		childNode->mLeftChild = mNilSentinel;
@@ -86,6 +108,25 @@ public:
 		// PPS23RB updateAfterInsert(node);
 		put_bottom_up_pass(childNode);
 	}
+
+	void insertFirstInOrderNode(T data)
+	{
+		IPPS23RBBTN *childNode = new IPPS23RBBTN();
+		childNode->mData = data;
+		childNode->mParent = mFirstInOrderNode;
+		childNode->mLeftChild = mNilSentinel;
+		childNode->mRightChild = mNilSentinel;
+		mFirstInOrderNode->mLeftChild = childNode;
+		mSize++;
+		mFirstInOrderNode = childNode;
+
+		// update mGlobalLeftSize
+		mGlobalLeftSize++;
+		mFirstInOrderNode->mLeftSize -= mGlobalLeftSize;
+		// PPS23RB updateAfterInsert(node);
+		put_bottom_up_pass(childNode);
+	}
+
 	// error if a left child already exists.
 	void insertLeftChild(IPPS23RBBTN *parentNode, T data)
 	{
@@ -94,7 +135,7 @@ public:
 		{
 			if (parentNode->mLeftChild == mNilSentinel)
 			{
-				IPPS23RBBTN *childNode = new IPPS23RBBTN;
+				IPPS23RBBTN *childNode = new IPPS23RBBTN();
 				childNode->mData = data;
 				childNode->mParent = parentNode;
 				childNode->mLeftChild = mNilSentinel;
@@ -118,7 +159,7 @@ public:
 		{
 			if (parentNode->mRightChild == mNilSentinel)
 			{
-				IPPS23RBBTN *childNode = new IPPS23RBBTN;
+				IPPS23RBBTN *childNode = new IPPS23RBBTN();
 				childNode->mData = data;
 				childNode->mParent = parentNode;
 				childNode->mLeftChild = mNilSentinel;
@@ -247,6 +288,8 @@ private:
 	IPPS23RBBTN *mPostOrderEnd;
 	IPPS23RBBTN *mNilSentinel;
 	IPPS23RBBTN *mLastInOrderNode;
+	IPPS23RBBTN *mFirstInOrderNode;
+	int mGlobalLeftSize;
 	int mSize;
 
 	void DeleteSubtree(IPPS23RBBTN *node)
@@ -494,34 +537,13 @@ private:
 		this->deleteNode(actualDeleteNode);
 	}
 	// If a degree-1 node is deleted, it is replaced by its subtree.
-	inline void deleteNode(IPPS23RBBTN *theNode)
+	void deleteNode(IPPS23RBBTN *theNode)
 	{
-		IPPS23RBBTN *theParent = theNode->mParent;
 		// Write your code here
 		if (theNode->mLeftChild == mNilSentinel || theNode->mRightChild == mNilSentinel)
 		{
 			updateBeforeDelete(theNode);
-			IPPS23RBBTN *theChild;
-			if (theNode->mRightChild != mNilSentinel)
-			{
-				theChild = theNode->mRightChild;
-				theChild->mParent = theParent;
-			}
-			else if (theNode->mLeftChild != mNilSentinel)
-			{
-				theChild = theNode->mLeftChild;
-				theChild->mParent = theParent;
-			}
-			else
-				theChild = mNilSentinel;
-
-			if (theParent && theParent->mRightChild == theNode)
-				theParent->mRightChild = theChild;
-			else if (theParent)
-				theParent->mLeftChild = theChild;
-
-			delete theNode;
-			mSize--;
+			IPPS23RBBTN *theParent = deleteNodeAndGetParent(theNode);
 			updateAfterDelete(theParent);
 		}
 		else
@@ -530,40 +552,103 @@ private:
 		}
 	}
 
-	inline void deleteLastInOrderNode()
+	inline IPPS23RBBTN *deleteNodeAndGetParent(IPPS23RBBTN *theNode)
 	{
-		IPPS23RBBTN *theParent = mLastInOrderNode->mParent;
+		IPPS23RBBTN *theParent = theNode->mParent;
+		IPPS23RBBTN *theChild;
+		if (theNode->mRightChild != mNilSentinel)
+		{
+			theChild = theNode->mRightChild;
+			theChild->mParent = theParent;
+		}
+		else if (theNode->mLeftChild != mNilSentinel)
+		{
+			theChild = theNode->mLeftChild;
+			theChild->mParent = theParent;
+		}
+		else
+			theChild = mNilSentinel;
+
+		if (theParent && theParent->mRightChild == theNode)
+			theParent->mRightChild = theChild;
+		else if (theParent)
+			theParent->mLeftChild = theChild;
+
+		delete theNode;
+		mSize--;
+		return theParent;
+	}
+
+	void deleteLastInOrderNode()
+	{
+		// start = clock();
 
 		// IndexedBT updateBeforeDelete(node);
 		mInOrderEnd->mLeftSize--;
 
 		// PPS23RB updateBeforeDelete(node);
-		this->mNilSentinel->mParent = theParent;
-		IPPS23RBBTN *theChild;
-		if (mLastInOrderNode->mLeftChild != mNilSentinel)
+		IPPS23RBBTN *parentNode = mLastInOrderNode->mParent;
+		this->mNilSentinel->mParent = parentNode;
+		IPPS23RBBTN *theChild = nullptr;
+		if (mLastInOrderNode->mLeftChild != this->mNilSentinel)
 		{
 			theChild = mLastInOrderNode->mLeftChild;
 			theChild->mColor = IPPS23RBBTN::BLACK;
-			// delete last inorder node
-			theChild->mParent = theParent;
-			delete mLastInOrderNode;
+		}
+
+		IPPS23RBBTN *theParent = deleteNodeAndGetParent(mLastInOrderNode);
+
+		if (theChild != nullptr)
+		{
 			mLastInOrderNode = theChild;
 		}
 		else
 		{
-			theChild = mNilSentinel;
-			delete mLastInOrderNode;
 			mLastInOrderNode = theParent;
 		}
 
-		theParent->mRightChild = theChild;
-		mSize--;
+		// end_clock = clock();
+		// removeTimeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 
-		if ((theParent->mLeftChild != this->mNilSentinel && theParent->mRightChild == this->mNilSentinel) ||
-			(theParent->mLeftChild == this->mNilSentinel && theParent->mRightChild != this->mNilSentinel))
+		// start = clock();
+		updateAfterDelete(theParent);
+		// end_clock = clock();
+		// timeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
+	}
+
+	void deleteFirstInOrderNode()
+	{
+		// start = clock();
+
+		// IndexedBT updateBeforeDelete(node);
+		mGlobalLeftSize--;
+
+		// PPS23RB updateBeforeDelete(node);
+		IPPS23RBBTN *parentNode = mFirstInOrderNode->mParent;
+		this->mNilSentinel->mParent = parentNode;
+		IPPS23RBBTN *theChild = nullptr;
+		if (mFirstInOrderNode->mRightChild != this->mNilSentinel)
 		{
-			remove_bottom_up_pass(this->mNilSentinel);
+			theChild = mFirstInOrderNode->mRightChild;
+			theChild->mColor = IPPS23RBBTN::BLACK;
 		}
-		this->mNilSentinel->mParent = 0;
+
+		IPPS23RBBTN *theParent = deleteNodeAndGetParent(mFirstInOrderNode);
+
+		if (theChild != nullptr)
+		{
+			mFirstInOrderNode = theChild;
+		}
+		else
+		{
+			mFirstInOrderNode = theParent;
+		}
+		// end_clock = clock();
+		// removeTimeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
+
+		// start = clock();
+		updateAfterDelete(theParent);
+		// end_clock = clock();
+		// timeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 	}
 };
