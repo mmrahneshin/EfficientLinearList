@@ -357,13 +357,7 @@ private:
 		// IndexedPPS23RB updateAfterLL(node);
 		IPPS23RBBTN *A = node->mRightChild;
 		IPPS23RBBTN *C = A->mLeftChild;
-		A->mLeftSize = 0;
-
-		while (C != this->mNilSentinel)
-		{
-			A->mLeftSize += C->mLeftSize + 1;
-			C = C->mRightChild;
-		}
+		A->mLeftSize -= node->mLeftSize + 1;
 
 		// PPS23RB updateAfterLL(node);
 		typename IPPS23RBBTN::COLOR c = node->mColor;
