@@ -202,7 +202,7 @@ int main()
 {
 
     int input;
-    int size = 100000;
+    int size = 1000000;
     values = new int[size];
     indexes = new int[size];
     deleteIndexes = new int[size / 2 + size / 4];
@@ -221,7 +221,7 @@ int main()
     double ellRemoveTimeTaken = 0;
 
     cout << "The test has started now with " << size << " insertions and " << size / 2 << " deletions:" << endl;
-    for (input = 0; input < 2; input++)
+    for (input = 0; input < 6; input++)
     {
         switch (input)
         {
@@ -232,7 +232,7 @@ int main()
             lst = new list<int>();
             insertToEfficientLinearList(ell, size);
             pushBackToList(lst, size);
-            // result = valueCheck(ell, lst, size);
+            result = valueCheck(ell, lst, size);
             break;
         case 1: // remove tests
             cout << endl
@@ -243,29 +243,29 @@ int main()
             }
             removeFromEfficientLinearList(ell, size / 2 + size / 4);
             popBackFromList(lst, size / 2 + size / 4);
-            // result = valueCheck(ell, lst, size / 2 + size / 4);
-            cout << ell->size() << " " << lst->size() << endl;
+            result = valueCheck(ell, lst, lst->size());
+            // cout << ell->size() << " " << lst->size() << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken();
             // cout << "updateAfterDelete time taken: " << ellUpdateTimeTaken << endl;
             // ellRemoveTimeTaken = ell->getRemoveTimeTaken();
             // cout << "remove process time taken: " << ellRemoveTimeTaken << endl;
 
-            for (int i = 0; i < size; i++)
-            {
-                indexes[i] = i + size / 4;
-            }
-            insertToEfficientLinearList(ell, size);
-            pushBackToList(lst, size);
-            // result = valueCheck(ell, lst, size);
+            // for (int i = 0; i < size; i++)
+            // {
+            //     indexes[i] = i + size / 4;
+            // }
+            // insertToEfficientLinearList(ell, size);
+            // pushBackToList(lst, size);
+            // result = valueCheck(ell, lst, lst->size());
 
-            for (int i = 0; i < size / 2 + size / 4; i++)
-            {
-                deleteIndexes[i] = ell->size() - (i + 1);
-            }
-            removeFromEfficientLinearList(ell, size / 2 + size / 4);
-            popBackFromList(lst, size / 2 + size / 4);
-            // result = valueCheck(ell, lst, size / 2 + size / 4);
-            cout << ell->size() << " " << lst->size() << endl;
+            // for (int i = 0; i < size / 2 + size / 4; i++)
+            // {
+            //     deleteIndexes[i] = ell->size() - (i + 1);
+            // }
+            // removeFromEfficientLinearList(ell, size / 2 + size / 4);
+            // popBackFromList(lst, size / 2 + size / 4);
+            // result = valueCheck(ell, lst, lst->size());
+            // cout << ell->size() << " " << lst->size() << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken() - ellUpdateTimeTaken;
             // cout << "updateAfterDelete time taken: " << ellUpdateTimeTaken << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken();
@@ -304,21 +304,21 @@ int main()
             removeFromEfficientLinearList(ell, size / 2);
             popFrontFromList(lst, size / 2);
             result = valueCheck(ell, lst, size / 2);
-            cout << ell->size() << " " << lst->size() << endl;
+            // cout << ell->size() << " " << lst->size() << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken();
             // cout << "updateAfterDelete time taken: " << ellUpdateTimeTaken << endl;
             // ellRemoveTimeTaken = ell->getRemoveTimeTaken();
             // cout << "remove process time taken: " << ellRemoveTimeTaken << endl;
 
-            insertToEfficientLinearList(ell, size);
-            pushBackToList(lst, size);
-            result = valueCheck(ell, lst, size);
-            cout << ell->size() << " " << lst->size() << endl;
+            // insertToEfficientLinearList(ell, size);
+            // pushBackToList(lst, size);
+            // result = valueCheck(ell, lst, size);
+            // cout << ell->size() << " " << lst->size() << endl;
 
-            removeFromEfficientLinearList(ell, size / 2);
-            popFrontFromList(lst, size / 2);
-            result = valueCheck(ell, lst, size / 2);
-            cout << ell->size() << " " << lst->size() << endl;
+            // removeFromEfficientLinearList(ell, size / 2);
+            // popFrontFromList(lst, size / 2);
+            // result = valueCheck(ell, lst, size / 2);
+            // cout << ell->size() << " " << lst->size() << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken() - ellUpdateTimeTaken;
             // cout << "updateAfterDelete time taken: " << ellUpdateTimeTaken << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken();
@@ -326,15 +326,15 @@ int main()
             // cout << "remove process time taken: " << ellRemoveTimeTaken << endl;
             // ellRemoveTimeTaken = ell->getRemoveTimeTaken();
 
-            insertToEfficientLinearList(ell, size);
-            pushBackToList(lst, size);
-            result = valueCheck(ell, lst, size);
-            cout << ell->size() << " " << lst->size() << endl;
+            // insertToEfficientLinearList(ell, size);
+            // pushBackToList(lst, size);
+            // result = valueCheck(ell, lst, size);
+            // cout << ell->size() << " " << lst->size() << endl;
 
-            removeFromEfficientLinearList(ell, size / 2);
-            popFrontFromList(lst, size / 2);
-            result = valueCheck(ell, lst, size / 2);
-            cout << ell->size() << " " << lst->size() << endl;
+            // removeFromEfficientLinearList(ell, size / 2);
+            // popFrontFromList(lst, size / 2);
+            // result = valueCheck(ell, lst, size / 2);
+            // cout << ell->size() << " " << lst->size() << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken() - ellUpdateTimeTaken;
             // cout << "updateAfterDelete time taken: " << ellUpdateTimeTaken << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken();
@@ -342,15 +342,15 @@ int main()
             // cout << "remove process time taken: " << ellRemoveTimeTaken << endl;
             // ellRemoveTimeTaken = ell->getRemoveTimeTaken();
 
-            insertToEfficientLinearList(ell, size);
-            pushBackToList(lst, size);
-            result = valueCheck(ell, lst, size);
-            cout << ell->size() << " " << lst->size() << endl;
+            // insertToEfficientLinearList(ell, size);
+            // pushBackToList(lst, size);
+            // result = valueCheck(ell, lst, size);
+            // cout << ell->size() << " " << lst->size() << endl;
 
-            removeFromEfficientLinearList(ell, size / 2);
-            popFrontFromList(lst, size / 2);
-            result = valueCheck(ell, lst, size / 2);
-            cout << ell->size() << " " << lst->size() << endl;
+            // removeFromEfficientLinearList(ell, size / 2);
+            // popFrontFromList(lst, size / 2);
+            // result = valueCheck(ell, lst, size / 2);
+            // cout << ell->size() << " " << lst->size() << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken() - ellUpdateTimeTaken;
             // cout << "updateAfterDelete time taken: " << ellUpdateTimeTaken << endl;
             // ellUpdateTimeTaken = ell->getTimeTaken();

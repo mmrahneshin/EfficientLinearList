@@ -46,7 +46,7 @@ public:
 			return;
 		}
 
-		IPPS23RBBTN *node = getNode(idx);
+		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, 1);
 		if (!mIPPS23RBbt->hasLeftChild(node))
 		{
 			mIPPS23RBbt->insertLeftChild(node, data);
@@ -71,7 +71,12 @@ public:
 
 	T &operator[](const int &idx)
 	{
-		IPPS23RBBTN *node = getNode(idx);
+		if (idx < 0 || idx >= mIPPS23RBbt->size())
+		{
+			throw std::runtime_error("out_of_range");
+		}
+		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, 0);
+
 		return node->mData;
 	}
 
@@ -94,7 +99,8 @@ public:
 			return;
 		}
 		// cout << "#################" << endl;
-		IPPS23RBBTN *node = getNode(idx);
+		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, -1);
+
 		mIPPS23RBbt->deleteNode(node);
 	}
 
@@ -125,10 +131,11 @@ public:
 	// }
 
 private:
-	inline IPPS23RBBTN *getNode(int idx)
+	inline IPPS23RBBTN *getNodeWithUpdateLeftSize(int idx, int status)
 	{
 		IPPS23RBBTN *node = mIPPS23RBbt->mInOrderEnd;
 		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
+		node->mLeftSize += status;
 		if (leftSize != idx)
 		{
 			node = mIPPS23RBbt->mPostOrderEnd->mRightChild;
@@ -142,6 +149,7 @@ private:
 		{
 			if (idx < leftSize)
 			{
+				node->mLeftSize += status;
 				node = node->mLeftChild;
 			}
 			else
@@ -152,6 +160,7 @@ private:
 			}
 			leftSize = node->mLeftSize + (mIPPS23RBbt->mGlobalLeftSize * leftOnly);
 		}
+		node->mLeftSize += status;
 		return node;
 	}
 

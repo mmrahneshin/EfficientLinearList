@@ -495,7 +495,7 @@ private:
 	inline void updateAfterInsert(IPPS23RBBTN *node)
 	{
 		// IndexedBT updateAfterInsert(node);
-		updateLeftSize(node, 1);
+		// updateLeftSize(node, 1);
 		// PPS23RB updateAfterInsert(node);
 		put_bottom_up_pass(node);
 	}
@@ -503,7 +503,7 @@ private:
 	inline void updateBeforeDelete(IPPS23RBBTN *node)
 	{
 		// IndexedBT updateBeforeDelete(node);
-		updateLeftSize(node, -1);
+		// updateLeftSize(node, -1);
 		// PPS23RB updateBeforeDelete(node);
 		IPPS23RBBTN *parentNode = node->mParent;
 		this->mNilSentinel->mParent = parentNode;
