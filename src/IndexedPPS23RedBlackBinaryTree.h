@@ -52,6 +52,15 @@ public:
 
 		mInOrderEnd->mLeftSize = 0;
 		mPostOrderEnd->mLeftSize = -1;
+
+		b1RightInsertion = 0;
+		b2RightInsertion = 0;
+		b1LeftInsertion = 0;
+		b2LeftInsertion = 0;
+		a1RightInsertion = 0;
+		a2RightInsertion = 0;
+		a1LeftInsertion = 0;
+		a2LeftInsertion = 0;
 	}
 
 	// caution: don't interpret destructor as an ordinary function!
@@ -270,6 +279,15 @@ public:
 	{
 		return InOrderIterator(mInOrderEnd, mNilSentinel);
 	}
+	int b1RightInsertion;
+	int b1LeftInsertion;
+	int b2RightInsertion;
+	int b2LeftInsertion;
+
+	int a1RightInsertion;
+	int a1LeftInsertion;
+	int a2RightInsertion;
+	int a2LeftInsertion;
 
 private:
 	//
@@ -416,8 +434,10 @@ private:
 					{
 						deficientNode = parentNode;
 						parentNode = this->RR(parentNode);
+						b2LeftInsertion++;
 					}
 					parentNode = this->LL(parentNode->mParent); // Rule (b.1)
+					b1LeftInsertion++;
 				}
 				else
 				{
@@ -425,21 +445,42 @@ private:
 					{
 						deficientNode = parentNode;
 						parentNode = this->LL(parentNode);
+						b2RightInsertion++;
 					}
 					parentNode = this->RR(parentNode->mParent); // Rule (b.1)
+					b1RightInsertion++;
 				}
 			}
 			siblingNode = (deficientNode == parentNode->mLeftChild) ? parentNode->mRightChild : parentNode->mLeftChild;
+
 			if (siblingNode->mColor == IPPS23RBBTN::RED) // Rule (a.2)
 			{
+				if (deficientNode == parentNode->mLeftChild)
+				{
+					a2LeftInsertion++;
+				}
+				else
+				{
+					a2RightInsertion++;
+				}
 				siblingNode->mColor = IPPS23RBBTN::BLACK;
 				deficientNode = parentNode;
 			}
 			else if (parentNode->mColor == IPPS23RBBTN::BLACK)
 				break;
 		}
-		if (deficientNode != this->mPostOrderEnd->mRightChild) // x->mColor is certainly BLACK
-			deficientNode->mColor = IPPS23RBBTN::RED;		   // Rule (a.1)
+		if (deficientNode != this->mPostOrderEnd->mRightChild)
+		{
+			deficientNode->mColor = IPPS23RBBTN::RED; // Rule (a.1)
+			if (deficientNode == parentNode->mLeftChild)
+			{
+				a1LeftInsertion++;
+			}
+			else
+			{
+				a1RightInsertion++;
+			}
+		} // x->mColor is certainly BLACK
 	}
 
 	inline void remove_bottom_up_pass(IPPS23RBBTN *x)
