@@ -549,63 +549,32 @@ private:
 		// updateLeftSize(node, -1);
 		// PPS23RB updateBeforeDelete(node);
 		IPPS23RBBTN *parentNode = node->mParent;
-		this->mNilSentinel->mParent = parentNode;
-		if (node->mLeftChild != this->mNilSentinel || node->mRightChild != this->mNilSentinel)
+		if (node->mLeftChild != this->mNilSentinel)
 		{
-			IPPS23RBBTN *theChild = (node->mLeftChild != this->mNilSentinel) ? node->mLeftChild : node->mRightChild;
+			IPPS23RBBTN *theChild = node->mLeftChild;
+			theChild->mColor = IPPS23RBBTN::BLACK;
+		}
+		else if (node->mRightChild != this->mNilSentinel)
+		{
+			IPPS23RBBTN *theChild = node->mRightChild;
 			theChild->mColor = IPPS23RBBTN::BLACK;
 		}
 	}
 
-	inline void updateAfterDelete(IPPS23RBBTN *node)
+	inline void updateAfterDelete(IPPS23RBBTN *parentNode)
 	{
-		if ((node->mLeftChild != this->mNilSentinel && node->mRightChild == this->mNilSentinel) ||
-			(node->mLeftChild == this->mNilSentinel && node->mRightChild != this->mNilSentinel))
+		if ((parentNode->mLeftChild != this->mNilSentinel && parentNode->mRightChild == this->mNilSentinel) ||
+			(parentNode->mLeftChild == this->mNilSentinel && parentNode->mRightChild != this->mNilSentinel))
 		{
+			this->mNilSentinel->mParent = parentNode;
 			remove_bottom_up_pass(this->mNilSentinel);
+			this->mNilSentinel->mParent = this->mNilSentinel;
 		}
-		this->mNilSentinel->mParent = 0;
 	}
 
 	inline void deleteDeg2Node(IPPS23RBBTN *node)
 	{
 		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(node);
-		// // fix the relation between the parent of node and the actualDelNode
-		// if (node == node->mParent->mRightChild)
-		// {
-		// 	node->mParent->mRightChild = actualDeleteNode;
-		// }
-		// else
-		// {
-		// 	node->mParent->mLeftChild = actualDeleteNode;
-		// }
-
-		// if (actualDeleteNode->mParent == node)
-		// {
-		// 	// parent
-		// 	actualDeleteNode->mParent = node->mParent;
-		// 	node->mParent = actualDeleteNode;
-		// 	// right
-		// 	actualDeleteNode->mRightChild = node->mRightChild;
-		// 	node->mRightChild = this->mNilSentinel; // actualDeleteNode->mRightChild == mNilSentinel
-		// 	// left
-		// 	node->mLeftChild = actualDeleteNode->mLeftChild;
-		// 	actualDeleteNode->mLeftChild = node;
-		// }
-		// else
-		// {
-		// 	// parent
-		// 	IPPS23RBBTN *theParent = actualDeleteNode->mParent;
-		// 	actualDeleteNode->mParent = node->mParent;
-		// 	node->mParent = theParent;
-		// 	// right
-		// 	actualDeleteNode->mRightChild = node->mRightChild;
-		// 	node->mRightChild = this->mNilSentinel; // actualDeleteNode->mRightChild == mNilSentinel
-		// 	// left
-		// 	IPPS23RBBTN *theLeftChild = actualDeleteNode->mLeftChild;
-		// 	actualDeleteNode->mLeftChild = node->mLeftChild;
-		// 	node->mLeftChild = theLeftChild;
-		// }
 
 		if (mFirstInOrderNode == actualDeleteNode)
 		{
@@ -665,8 +634,6 @@ private:
 		mInOrderEnd->mLeftSize--;
 
 		// PPS23RB updateBeforeDelete(node);
-		IPPS23RBBTN *parentNode = mLastInOrderNode->mParent;
-		this->mNilSentinel->mParent = parentNode;
 		IPPS23RBBTN *theChild = nullptr;
 		if (mLastInOrderNode->mLeftChild != this->mNilSentinel)
 		{
@@ -702,13 +669,12 @@ private:
 		mGlobalLeftSize--;
 
 		// PPS23RB updateBeforeDelete(node);
-		IPPS23RBBTN *parentNode = mFirstInOrderNode->mParent;
-		this->mNilSentinel->mParent = parentNode;
 		IPPS23RBBTN *theChild = nullptr;
 		if (mFirstInOrderNode->mRightChild != this->mNilSentinel)
 		{
 			theChild = mFirstInOrderNode->mRightChild;
 			theChild->mColor = IPPS23RBBTN::BLACK;
+			theChild->mLeftSize = mFirstInOrderNode->mLeftSize + 1;
 		}
 
 		IPPS23RBBTN *theParent = deleteNodeAndGetParent(mFirstInOrderNode);
