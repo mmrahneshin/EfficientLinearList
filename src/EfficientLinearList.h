@@ -113,7 +113,7 @@ public:
 	// {
 	// 	return mIPPS23RBbt->depthCalc(mIPPS23RBbt->getRootNode(), 1);
 	// };
-	//  void drawTree()
+	// void drawTree()
 	// {
 	// 	mIPPS23RBbt->draw(cout);
 	// }

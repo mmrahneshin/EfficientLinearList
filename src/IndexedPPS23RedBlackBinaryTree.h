@@ -53,14 +53,14 @@ public:
 		mInOrderEnd->mLeftSize = 0;
 		mPostOrderEnd->mLeftSize = -1;
 
-		b1RightInsertion = 0;
-		b2RightInsertion = 0;
-		b1LeftInsertion = 0;
-		b2LeftInsertion = 0;
-		a1RightInsertion = 0;
-		a2RightInsertion = 0;
-		a1LeftInsertion = 0;
-		a2LeftInsertion = 0;
+		// b1RightInsertion = 0;
+		// b2RightInsertion = 0;
+		// b1LeftInsertion = 0;
+		// b2LeftInsertion = 0;
+		// a1RightInsertion = 0;
+		// a2RightInsertion = 0;
+		// a1LeftInsertion = 0;
+		// a2LeftInsertion = 0;
 	}
 
 	// caution: don't interpret destructor as an ordinary function!
@@ -98,7 +98,8 @@ public:
 		mFirstInOrderNode = root;
 
 		mSize = 1;
-		mInOrderEnd->mLeftSize++;
+		mGlobalLeftSize++;
+		mFirstInOrderNode->mLeftSize -= mGlobalLeftSize;
 	}
 
 	void insertLastInOrderNode(T data)
@@ -131,6 +132,7 @@ public:
 
 		// update mGlobalLeftSize
 		mGlobalLeftSize++;
+
 		mFirstInOrderNode->mLeftSize -= mGlobalLeftSize;
 		// PPS23RB updateAfterInsert(node);
 		put_bottom_up_pass(childNode);
@@ -279,15 +281,15 @@ public:
 	{
 		return InOrderIterator(mInOrderEnd, mNilSentinel);
 	}
-	int b1RightInsertion;
-	int b1LeftInsertion;
-	int b2RightInsertion;
-	int b2LeftInsertion;
+	// int b1RightInsertion;
+	// int b1LeftInsertion;
+	// int b2RightInsertion;
+	// int b2LeftInsertion;
 
-	int a1RightInsertion;
-	int a1LeftInsertion;
-	int a2RightInsertion;
-	int a2LeftInsertion;
+	// int a1RightInsertion;
+	// int a1LeftInsertion;
+	// int a2RightInsertion;
+	// int a2LeftInsertion;
 
 private:
 	//
@@ -331,7 +333,7 @@ private:
 
 	inline void updateAfterRR(IPPS23RBBTN *node)
 	{
-		// IndexedPPS23RB updateAfterRR(node);
+		// IndexedBT updateAfterRR(node);
 		IPPS23RBBTN *A = node->mLeftChild;
 		node->mLeftSize += A->mLeftSize + 1; // B->mLeftSize = [C->mLeftSize + 1](is B->mLeftSize) + A->mLeftSize + 1
 
@@ -372,7 +374,7 @@ private:
 
 	inline void updateAfterLL(IPPS23RBBTN *node)
 	{
-		// IndexedPPS23RB updateAfterLL(node);
+		// IndexedBT updateAfterLL(node);
 		IPPS23RBBTN *A = node->mRightChild;
 		IPPS23RBBTN *C = A->mLeftChild;
 		A->mLeftSize -= node->mLeftSize + 1;
@@ -434,10 +436,10 @@ private:
 					{
 						deficientNode = parentNode;
 						parentNode = this->RR(parentNode);
-						b2LeftInsertion++;
+						// b2LeftInsertion++;
 					}
 					parentNode = this->LL(parentNode->mParent); // Rule (b.1)
-					b1LeftInsertion++;
+																// b1LeftInsertion++;
 				}
 				else
 				{
@@ -445,24 +447,24 @@ private:
 					{
 						deficientNode = parentNode;
 						parentNode = this->LL(parentNode);
-						b2RightInsertion++;
+						// b2RightInsertion++;
 					}
 					parentNode = this->RR(parentNode->mParent); // Rule (b.1)
-					b1RightInsertion++;
+																// b1RightInsertion++;
 				}
 			}
 			siblingNode = (deficientNode == parentNode->mLeftChild) ? parentNode->mRightChild : parentNode->mLeftChild;
 
 			if (siblingNode->mColor == IPPS23RBBTN::RED) // Rule (a.2)
 			{
-				if (deficientNode == parentNode->mLeftChild)
-				{
-					a2LeftInsertion++;
-				}
-				else
-				{
-					a2RightInsertion++;
-				}
+				// if (deficientNode == parentNode->mLeftChild)
+				// {
+				// 	a2LeftInsertion++;
+				// }
+				// else
+				// {
+				// 	a2RightInsertion++;
+				// }
 				siblingNode->mColor = IPPS23RBBTN::BLACK;
 				deficientNode = parentNode;
 			}
@@ -472,14 +474,14 @@ private:
 		if (deficientNode != this->mPostOrderEnd->mRightChild)
 		{
 			deficientNode->mColor = IPPS23RBBTN::RED; // Rule (a.1)
-			if (deficientNode == parentNode->mLeftChild)
-			{
-				a1LeftInsertion++;
-			}
-			else
-			{
-				a1RightInsertion++;
-			}
+													  // if (deficientNode == parentNode->mLeftChild)
+													  // {
+													  // 	a1LeftInsertion++;
+													  // }
+													  // else
+													  // {
+													  // 	a1RightInsertion++;
+													  // }
 		} // x->mColor is certainly BLACK
 	}
 
@@ -568,7 +570,48 @@ private:
 	inline void deleteDeg2Node(IPPS23RBBTN *node)
 	{
 		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(node);
-		node->mData = actualDeleteNode->mData; // از استاد در مورد جایگاه این کد پرسیده شود
+		// // fix the relation between the parent of node and the actualDelNode
+		// if (node == node->mParent->mRightChild)
+		// {
+		// 	node->mParent->mRightChild = actualDeleteNode;
+		// }
+		// else
+		// {
+		// 	node->mParent->mLeftChild = actualDeleteNode;
+		// }
+
+		// if (actualDeleteNode->mParent == node)
+		// {
+		// 	// parent
+		// 	actualDeleteNode->mParent = node->mParent;
+		// 	node->mParent = actualDeleteNode;
+		// 	// right
+		// 	actualDeleteNode->mRightChild = node->mRightChild;
+		// 	node->mRightChild = this->mNilSentinel; // actualDeleteNode->mRightChild == mNilSentinel
+		// 	// left
+		// 	node->mLeftChild = actualDeleteNode->mLeftChild;
+		// 	actualDeleteNode->mLeftChild = node;
+		// }
+		// else
+		// {
+		// 	// parent
+		// 	IPPS23RBBTN *theParent = actualDeleteNode->mParent;
+		// 	actualDeleteNode->mParent = node->mParent;
+		// 	node->mParent = theParent;
+		// 	// right
+		// 	actualDeleteNode->mRightChild = node->mRightChild;
+		// 	node->mRightChild = this->mNilSentinel; // actualDeleteNode->mRightChild == mNilSentinel
+		// 	// left
+		// 	IPPS23RBBTN *theLeftChild = actualDeleteNode->mLeftChild;
+		// 	actualDeleteNode->mLeftChild = node->mLeftChild;
+		// 	node->mLeftChild = theLeftChild;
+		// }
+
+		if (mFirstInOrderNode == actualDeleteNode)
+		{
+			mFirstInOrderNode = node;
+		}
+		node->mData = actualDeleteNode->mData;
 		this->deleteNode(actualDeleteNode);
 	}
 	// If a degree-1 node is deleted, it is replaced by its subtree.
@@ -604,9 +647,9 @@ private:
 		else
 			theChild = mNilSentinel;
 
-		if (theParent && theParent->mRightChild == theNode)
+		if (theParent->mRightChild == theNode)
 			theParent->mRightChild = theChild;
-		else if (theParent)
+		else
 			theParent->mLeftChild = theChild;
 
 		delete theNode;
@@ -686,4 +729,104 @@ private:
 		// end_clock = clock();
 		// timeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 	}
+
+	// void draw(std::ostream &out)
+	// {
+	// 	if (mSize == 0)
+	// 		return;
+
+	// 	int maxDepth = 9;
+	// 	int depth = depthCalc(this->mNilSentinel->mLeftChild, 1);
+	// 	depth = depth * 2 - 1;
+
+	// 	if (depth > maxDepth)
+	// 	{
+	// 		out << "Can't draw, the height of the tree is greater than " << (maxDepth + 1) / 2 << "\n";
+	// 		return;
+	// 	}
+
+	// 	T **dataMap = new T *[depth];
+	// 	char **linesMap = new char *[depth];
+	// 	for (int i = 0; i < depth; i++)
+	// 	{
+	// 		dataMap[i] = new T[80];
+	// 		linesMap[i] = new char[80];
+	// 		for (int j = 0; j < 80; j++)
+	// 		{
+	// 			dataMap[i][j] = T();
+	// 			linesMap[i][j] = ' ';
+	// 		}
+	// 	}
+
+	// 	recursiveDraw(this->mNilSentinel->mLeftChild, dataMap, linesMap, 40, 0);
+
+	// 	for (int i = 0; i < depth; i++)
+	// 		for (int j = 0; j < 80; j++)
+	// 		{
+	// 			if (dataMap[i][j] != T())
+	// 			{
+	// 				out << dataMap[i][j];
+	// 			}
+	// 			else
+	// 			{
+	// 				out << linesMap[i][j];
+	// 			}
+	// 		}
+
+	// 	for (int i = 0; i < depth; i++)
+	// 	{
+	// 		delete[] dataMap[i];
+	// 		delete[] linesMap[i];
+	// 	}
+	// 	delete[] dataMap;
+	// 	delete[] linesMap;
+	// }
+
+	// void recursiveDraw(IPPS23RBBTN *root, T **dataMap, char **linesMap, int x, int y)
+	// {
+	// 	int des = 1;
+	// 	for (int i = 0; i < y / 2 + 2; i++)
+	// 		des *= 2;
+	// 	des = 80 / des;
+	// 	// root:
+	// 	for (int i = 0; i < 1; i++)					 // we can delete mNodeDisplayWidth
+	// 		dataMap[y][x + i - 1 / 2] = root->mData; // we can delete mNodeDisplayWidth
+	// 	// left child:
+	// 	if (root->mLeftChild != mNilSentinel)
+	// 	{
+	// 		for (int i = 0; i < des; i++)
+	// 			linesMap[y + 1][x - i] = '-';
+	// 		linesMap[y + 1][x] = '|';
+	// 		recursiveDraw(root->mLeftChild, dataMap, linesMap, x - des, y + 2);
+	// 	}
+	// 	// right child:
+	// 	if (root->mRightChild != mNilSentinel)
+	// 	{
+	// 		for (int i = 0; i < des; i++)
+	// 			linesMap[y + 1][x + i] = '-';
+	// 		linesMap[y + 1][x] = '|';
+	// 		recursiveDraw(root->mRightChild, dataMap, linesMap, x + des, y + 2);
+	// 	}
+	// }
+
+	// int depthCalc(IPPS23RBBTN *root, int depth)
+	// {
+	// 	if (mSize == 0)
+	// 	{
+	// 		return 0;
+	// 	}
+
+	// 	int res = depth;
+	// 	if (root->mRightChild != mNilSentinel)
+	// 	{
+	// 		int rightDepth = depthCalc(root->mRightChild, depth + 1);
+	// 		res = (res > rightDepth) ? res : rightDepth;
+	// 	}
+	// 	if (root->mLeftChild != mNilSentinel)
+	// 	{
+	// 		int leftDepth = depthCalc(root->mLeftChild, depth + 1);
+	// 		res = (res > leftDepth) ? res : leftDepth;
+	// 	}
+	// 	return res;
+	// }
 };
