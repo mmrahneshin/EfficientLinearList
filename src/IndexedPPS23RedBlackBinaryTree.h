@@ -98,8 +98,7 @@ public:
 		mFirstInOrderNode = root;
 
 		mSize = 1;
-		mGlobalLeftSize++;
-		mFirstInOrderNode->mLeftSize -= mGlobalLeftSize;
+		mInOrderEnd->mLeftSize++;
 	}
 
 	void insertLastInOrderNode(T data)
@@ -412,16 +411,6 @@ private:
 		return B;
 	}
 
-	inline IPPS23RBBTN *getActualDeleteNode(IPPS23RBBTN *node)
-	{
-		IPPS23RBBTN *actualDeleteNode = node->mLeftChild;
-		while (actualDeleteNode->mRightChild != this->mNilSentinel)
-		{
-			actualDeleteNode = actualDeleteNode->mRightChild;
-		}
-		return actualDeleteNode;
-	}
-
 	inline void put_bottom_up_pass(IPPS23RBBTN *deficientNode)
 	{
 		IPPS23RBBTN *parentNode, *siblingNode;
@@ -543,24 +532,6 @@ private:
 		put_bottom_up_pass(node);
 	}
 
-	inline void updateBeforeDelete(IPPS23RBBTN *node)
-	{
-		// IndexedBT updateBeforeDelete(node);
-		// updateLeftSize(node, -1);
-		// PPS23RB updateBeforeDelete(node);
-		IPPS23RBBTN *parentNode = node->mParent;
-		if (node->mLeftChild != this->mNilSentinel)
-		{
-			IPPS23RBBTN *theChild = node->mLeftChild;
-			theChild->mColor = IPPS23RBBTN::BLACK;
-		}
-		else if (node->mRightChild != this->mNilSentinel)
-		{
-			IPPS23RBBTN *theChild = node->mRightChild;
-			theChild->mColor = IPPS23RBBTN::BLACK;
-		}
-	}
-
 	inline void updateAfterDelete(IPPS23RBBTN *parentNode)
 	{
 		if ((parentNode->mLeftChild != this->mNilSentinel && parentNode->mRightChild == this->mNilSentinel) ||
@@ -572,54 +543,59 @@ private:
 		}
 	}
 
-	inline void deleteDeg2Node(IPPS23RBBTN *node)
+	inline IPPS23RBBTN *getActualDeleteNode(IPPS23RBBTN *theNode)
 	{
-		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(node);
-
-		if (mFirstInOrderNode == actualDeleteNode)
+		IPPS23RBBTN *actualDeleteNode = theNode;
+		if (theNode->mLeftChild != mNilSentinel)
 		{
-			mFirstInOrderNode = node;
+			actualDeleteNode = theNode->mLeftChild;
+			while (actualDeleteNode->mRightChild != this->mNilSentinel)
+			{
+				actualDeleteNode = actualDeleteNode->mRightChild;
+			}
+			if (actualDeleteNode == mFirstInOrderNode)
+			{
+				// mGlobalLeftSize--;
+				mFirstInOrderNode = theNode;
+			}
+			theNode->mData = actualDeleteNode->mData;
+			if (actualDeleteNode->mLeftChild != mNilSentinel)
+			{
+				actualDeleteNode->mData = actualDeleteNode->mLeftChild->mData;
+				actualDeleteNode->mLeftSize--;
+				actualDeleteNode = actualDeleteNode->mLeftChild;
+			}
 		}
-		node->mData = actualDeleteNode->mData;
-		this->deleteNode(actualDeleteNode);
+		else if (theNode->mRightChild != mNilSentinel)
+		{
+			actualDeleteNode = theNode->mRightChild;
+			if (actualDeleteNode == mLastInOrderNode)
+			{
+				mLastInOrderNode = theNode;
+			}
+			theNode->mData = actualDeleteNode->mData;
+		}
+
+		return actualDeleteNode;
 	}
+
 	// If a degree-1 node is deleted, it is replaced by its subtree.
 	void deleteNode(IPPS23RBBTN *theNode)
 	{
-		// Write your code here
-		if (theNode->mLeftChild == mNilSentinel || theNode->mRightChild == mNilSentinel)
-		{
-			updateBeforeDelete(theNode);
-			IPPS23RBBTN *theParent = deleteNodeAndGetParent(theNode);
-			updateAfterDelete(theParent);
-		}
-		else
-		{
-			deleteDeg2Node(theNode);
-		}
+		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(theNode);
+
+		IPPS23RBBTN *theParent = deleteNodeAndGetParent(actualDeleteNode);
+		updateAfterDelete(theParent);
 	}
 
 	inline IPPS23RBBTN *deleteNodeAndGetParent(IPPS23RBBTN *theNode)
 	{
 		IPPS23RBBTN *theParent = theNode->mParent;
-		IPPS23RBBTN *theChild;
-		if (theNode->mRightChild != mNilSentinel)
-		{
-			theChild = theNode->mRightChild;
-			theChild->mParent = theParent;
-		}
-		else if (theNode->mLeftChild != mNilSentinel)
-		{
-			theChild = theNode->mLeftChild;
-			theChild->mParent = theParent;
-		}
-		else
-			theChild = mNilSentinel;
 
 		if (theParent->mRightChild == theNode)
-			theParent->mRightChild = theChild;
+			theParent->mRightChild = mNilSentinel;
 		else
-			theParent->mLeftChild = theChild;
+			theParent->mLeftChild = mNilSentinel;
 
 		delete theNode;
 		mSize--;
@@ -629,34 +605,29 @@ private:
 	void deleteLastInOrderNode()
 	{
 		// start = clock();
+		// if (mLastInOrderNode->mLeftChild == mFirstInOrderNode)
+		// {
+		// 	mFirstInOrderNode->mData = mFirstInOrderNode->mData;
+		// 	deleteFirstInOrderNode();
+		// 	return;
+		// }
 
-		// IndexedBT updateBeforeDelete(node);
+		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(mLastInOrderNode);
+
 		mInOrderEnd->mLeftSize--;
-
-		// PPS23RB updateBeforeDelete(node);
-		IPPS23RBBTN *theChild = nullptr;
-		if (mLastInOrderNode->mLeftChild != this->mNilSentinel)
+		if (actualDeleteNode != mLastInOrderNode)
 		{
-			theChild = mLastInOrderNode->mLeftChild;
-			theChild->mColor = IPPS23RBBTN::BLACK;
+			mLastInOrderNode->mLeftSize--;
 		}
 
-		IPPS23RBBTN *theParent = deleteNodeAndGetParent(mLastInOrderNode);
-
-		if (theChild != nullptr)
-		{
-			mLastInOrderNode = theChild;
-		}
-		else
-		{
-			mLastInOrderNode = theParent;
-		}
+		IPPS23RBBTN *theParent = deleteNodeAndGetParent(actualDeleteNode);
+		mLastInOrderNode = theParent;
 
 		// end_clock = clock();
 		// removeTimeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 
 		// start = clock();
-		updateAfterDelete(theParent);
+		updateAfterDelete(mLastInOrderNode);
 		// end_clock = clock();
 		// timeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 	}
@@ -665,134 +636,36 @@ private:
 	{
 		// start = clock();
 
-		// IndexedBT updateBeforeDelete(node);
-		mGlobalLeftSize--;
-
-		// PPS23RB updateBeforeDelete(node);
-		IPPS23RBBTN *theChild = nullptr;
-		if (mFirstInOrderNode->mRightChild != this->mNilSentinel)
+		// if (mFirstInOrderNode->mRightChild == mLastInOrderNode)
+		// {
+		// 	mFirstInOrderNode->mData = mLastInOrderNode->mData;
+		// 	deleteLastInOrderNode();
+		// 	return;
+		// }
+		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(mFirstInOrderNode);
+		if (actualDeleteNode != mFirstInOrderNode)
 		{
-			theChild = mFirstInOrderNode->mRightChild;
-			theChild->mColor = IPPS23RBBTN::BLACK;
-			theChild->mLeftSize = mFirstInOrderNode->mLeftSize + 1;
-		}
-
-		IPPS23RBBTN *theParent = deleteNodeAndGetParent(mFirstInOrderNode);
-
-		if (theChild != nullptr)
-		{
-			mFirstInOrderNode = theChild;
+			IPPS23RBBTN *iNode = mFirstInOrderNode;
+			while (iNode->mParent)
+			{
+				if (iNode == iNode->mParent->mLeftChild)
+					iNode->mParent->mLeftSize -= 1;
+				iNode = iNode->mParent;
+			}
 		}
 		else
 		{
-			mFirstInOrderNode = theParent;
+			mGlobalLeftSize--;
 		}
+
+		IPPS23RBBTN *theParent = deleteNodeAndGetParent(actualDeleteNode);
+		mFirstInOrderNode = theParent;
 		// end_clock = clock();
 		// removeTimeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 
 		// start = clock();
-		updateAfterDelete(theParent);
+		updateAfterDelete(mFirstInOrderNode);
 		// end_clock = clock();
 		// timeTaken += double(end_clock - start) / double(CLOCKS_PER_SEC);
 	}
-
-	// void draw(std::ostream &out)
-	// {
-	// 	if (mSize == 0)
-	// 		return;
-
-	// 	int maxDepth = 9;
-	// 	int depth = depthCalc(this->mNilSentinel->mLeftChild, 1);
-	// 	depth = depth * 2 - 1;
-
-	// 	if (depth > maxDepth)
-	// 	{
-	// 		out << "Can't draw, the height of the tree is greater than " << (maxDepth + 1) / 2 << "\n";
-	// 		return;
-	// 	}
-
-	// 	T **dataMap = new T *[depth];
-	// 	char **linesMap = new char *[depth];
-	// 	for (int i = 0; i < depth; i++)
-	// 	{
-	// 		dataMap[i] = new T[80];
-	// 		linesMap[i] = new char[80];
-	// 		for (int j = 0; j < 80; j++)
-	// 		{
-	// 			dataMap[i][j] = T();
-	// 			linesMap[i][j] = ' ';
-	// 		}
-	// 	}
-
-	// 	recursiveDraw(this->mNilSentinel->mLeftChild, dataMap, linesMap, 40, 0);
-
-	// 	for (int i = 0; i < depth; i++)
-	// 		for (int j = 0; j < 80; j++)
-	// 		{
-	// 			if (dataMap[i][j] != T())
-	// 			{
-	// 				out << dataMap[i][j];
-	// 			}
-	// 			else
-	// 			{
-	// 				out << linesMap[i][j];
-	// 			}
-	// 		}
-
-	// 	for (int i = 0; i < depth; i++)
-	// 	{
-	// 		delete[] dataMap[i];
-	// 		delete[] linesMap[i];
-	// 	}
-	// 	delete[] dataMap;
-	// 	delete[] linesMap;
-	// }
-
-	// void recursiveDraw(IPPS23RBBTN *root, T **dataMap, char **linesMap, int x, int y)
-	// {
-	// 	int des = 1;
-	// 	for (int i = 0; i < y / 2 + 2; i++)
-	// 		des *= 2;
-	// 	des = 80 / des;
-	// 	// root:
-	// 	for (int i = 0; i < 1; i++)					 // we can delete mNodeDisplayWidth
-	// 		dataMap[y][x + i - 1 / 2] = root->mData; // we can delete mNodeDisplayWidth
-	// 	// left child:
-	// 	if (root->mLeftChild != mNilSentinel)
-	// 	{
-	// 		for (int i = 0; i < des; i++)
-	// 			linesMap[y + 1][x - i] = '-';
-	// 		linesMap[y + 1][x] = '|';
-	// 		recursiveDraw(root->mLeftChild, dataMap, linesMap, x - des, y + 2);
-	// 	}
-	// 	// right child:
-	// 	if (root->mRightChild != mNilSentinel)
-	// 	{
-	// 		for (int i = 0; i < des; i++)
-	// 			linesMap[y + 1][x + i] = '-';
-	// 		linesMap[y + 1][x] = '|';
-	// 		recursiveDraw(root->mRightChild, dataMap, linesMap, x + des, y + 2);
-	// 	}
-	// }
-
-	// int depthCalc(IPPS23RBBTN *root, int depth)
-	// {
-	// 	if (mSize == 0)
-	// 	{
-	// 		return 0;
-	// 	}
-
-	// 	int res = depth;
-	// 	if (root->mRightChild != mNilSentinel)
-	// 	{
-	// 		int rightDepth = depthCalc(root->mRightChild, depth + 1);
-	// 		res = (res > rightDepth) ? res : rightDepth;
-	// 	}
-	// 	if (root->mLeftChild != mNilSentinel)
-	// 	{
-	// 		int leftDepth = depthCalc(root->mLeftChild, depth + 1);
-	// 		res = (res > leftDepth) ? res : leftDepth;
-	// 	}
-	// 	return res;
-	// }
 };

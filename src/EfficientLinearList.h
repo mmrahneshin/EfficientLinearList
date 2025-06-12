@@ -47,6 +47,8 @@ public:
 		}
 
 		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, 1);
+		node->mLeftSize += 1;
+
 		if (!mIPPS23RBbt->hasLeftChild(node))
 		{
 			mIPPS23RBbt->insertLeftChild(node, data);
@@ -100,6 +102,10 @@ public:
 		}
 		// cout << "#################" << endl;
 		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, -1);
+		if (node->mLeftChild != mIPPS23RBbt->mNilSentinel)
+		{
+			node->mLeftSize -= 1;
+		}
 
 		mIPPS23RBbt->deleteNode(node);
 	}
@@ -160,7 +166,6 @@ private:
 			}
 			leftSize = node->mLeftSize + (mIPPS23RBbt->mGlobalLeftSize * leftOnly);
 		}
-		node->mLeftSize += status;
 		return node;
 	}
 
