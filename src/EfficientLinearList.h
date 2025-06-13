@@ -140,17 +140,9 @@ private:
 	inline IPPS23RBBTN *getNodeWithUpdateLeftSize(int idx, int status)
 	{
 		IPPS23RBBTN *node = mIPPS23RBbt->mInOrderEnd;
-		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
-		node->mLeftSize += status;
-		if (leftSize != idx)
-		{
-			node = mIPPS23RBbt->mPostOrderEnd->mRightChild;
-		}
-		else
-			return node;
 
 		int leftOnly = 1;
-		leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
+		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
 		while (leftSize != idx)
 		{
 			if (idx < leftSize)
