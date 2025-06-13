@@ -112,9 +112,7 @@ public:
 		mSize++;
 		mLastInOrderNode = childNode;
 
-		// IndexedBT updateAfterInsert(node);
 		mInOrderEnd->mLeftSize++;
-		// PPS23RB updateAfterInsert(node);
 		put_bottom_up_pass(childNode);
 	}
 
@@ -133,7 +131,6 @@ public:
 		mGlobalLeftSize++;
 
 		mFirstInOrderNode->mLeftSize -= mGlobalLeftSize;
-		// PPS23RB updateAfterInsert(node);
 		put_bottom_up_pass(childNode);
 	}
 
@@ -143,7 +140,7 @@ public:
 		// Write your code here
 		if (parentNode)
 		{
-			if (parentNode->mLeftChild == mNilSentinel)
+			if (!hasLeftChild(parentNode))
 			{
 				IPPS23RBBTN *childNode = new IPPS23RBBTN();
 				childNode->mData = data;
@@ -152,7 +149,7 @@ public:
 				childNode->mRightChild = mNilSentinel;
 				parentNode->mLeftChild = childNode;
 				mSize++;
-				updateAfterInsert(childNode);
+				put_bottom_up_pass(childNode);
 			}
 			else
 				throw std::runtime_error("Can't insert a left child for a node which already has a left child.");
@@ -167,7 +164,7 @@ public:
 		// Write your code here
 		if (parentNode)
 		{
-			if (parentNode->mRightChild == mNilSentinel)
+			if (!hasRightChild(parentNode))
 			{
 				IPPS23RBBTN *childNode = new IPPS23RBBTN();
 				childNode->mData = data;
@@ -176,7 +173,7 @@ public:
 				childNode->mRightChild = mNilSentinel;
 				parentNode->mRightChild = childNode;
 				mSize++;
-				updateAfterInsert(childNode);
+				put_bottom_up_pass(childNode);
 			}
 			else
 				throw std::runtime_error("Can't insert a right child for a node which already has a right child.");
@@ -320,16 +317,6 @@ private:
 		delete node;
 	}
 
-	inline void updateLeftSize(IPPS23RBBTN *iNode, int diff)
-	{
-		while (iNode->mParent)
-		{
-			if (iNode == iNode->mParent->mLeftChild)
-				iNode->mParent->mLeftSize += diff;
-			iNode = iNode->mParent;
-		}
-	}
-
 	inline void updateAfterRR(IPPS23RBBTN *node)
 	{
 		// IndexedBT updateAfterRR(node);
@@ -348,7 +335,7 @@ private:
 		IPPS23RBBTN *B = A->mRightChild;
 		A->mRightChild = B->mLeftChild;
 
-		if (B->mLeftChild != 0)
+		if (hasLeftChild(B))
 		{
 			B->mLeftChild->mParent = A;
 		}
@@ -390,7 +377,7 @@ private:
 		IPPS23RBBTN *B = A->mLeftChild;
 		A->mLeftChild = B->mRightChild;
 
-		if (B->mRightChild != 0)
+		if (hasRightChild(B))
 		{
 			B->mRightChild->mParent = A;
 		}
@@ -524,18 +511,10 @@ private:
 		return x;
 	}
 
-	inline void updateAfterInsert(IPPS23RBBTN *node)
-	{
-		// IndexedBT updateAfterInsert(node);
-		// updateLeftSize(node, 1);
-		// PPS23RB updateAfterInsert(node);
-		put_bottom_up_pass(node);
-	}
-
 	inline void updateAfterDelete(IPPS23RBBTN *parentNode)
 	{
-		if ((parentNode->mLeftChild != this->mNilSentinel && parentNode->mRightChild == this->mNilSentinel) ||
-			(parentNode->mLeftChild == this->mNilSentinel && parentNode->mRightChild != this->mNilSentinel))
+		if ((hasLeftChild(parentNode) && !hasRightChild(parentNode)) ||
+			(!hasLeftChild(parentNode) && hasRightChild(parentNode)))
 		{
 			this->mNilSentinel->mParent = parentNode;
 			remove_bottom_up_pass(this->mNilSentinel);
@@ -546,27 +525,27 @@ private:
 	inline IPPS23RBBTN *getActualDeleteNode(IPPS23RBBTN *theNode)
 	{
 		IPPS23RBBTN *actualDeleteNode = theNode;
-		if (theNode->mLeftChild != mNilSentinel)
+		if (hasLeftChild(theNode))
 		{
 			actualDeleteNode = theNode->mLeftChild;
-			while (actualDeleteNode->mRightChild != this->mNilSentinel)
+			while (hasRightChild(actualDeleteNode))
 			{
 				actualDeleteNode = actualDeleteNode->mRightChild;
 			}
-			if (actualDeleteNode == mFirstInOrderNode)
-			{
-				// mGlobalLeftSize--;
-				mFirstInOrderNode = theNode;
-			}
 			theNode->mData = actualDeleteNode->mData;
-			if (actualDeleteNode->mLeftChild != mNilSentinel)
+			if (hasLeftChild(actualDeleteNode))
 			{
 				actualDeleteNode->mData = actualDeleteNode->mLeftChild->mData;
 				actualDeleteNode->mLeftSize--;
 				actualDeleteNode = actualDeleteNode->mLeftChild;
 			}
+			if (actualDeleteNode == mFirstInOrderNode)
+			{
+				// mGlobalLeftSize--;
+				mFirstInOrderNode = actualDeleteNode->mParent;
+			}
 		}
-		else if (theNode->mRightChild != mNilSentinel)
+		else if (hasRightChild(theNode))
 		{
 			actualDeleteNode = theNode->mRightChild;
 			if (actualDeleteNode == mLastInOrderNode)
