@@ -77,6 +77,9 @@ public:
 		mLastInOrderNode = root;
 		mFirstInOrderNode = root;
 
+		mGlobalLeftSize = 0;
+		mRevInOrderEnd->mLeftSize = -1;
+		mInOrderEnd->mLeftSize = 0;
 		mSize = 1;
 		mInOrderEnd->mLeftSize++;
 	}
