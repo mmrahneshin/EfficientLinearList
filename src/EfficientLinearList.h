@@ -34,15 +34,15 @@ public:
 			return;
 		}
 
-		if (idx == 0)
-		{
-			mIPPS23RBbt->insertFirstInOrderNode(data);
-			return;
-		}
-
 		if (idx == mIPPS23RBbt->size())
 		{
 			mIPPS23RBbt->insertLastInOrderNode(data);
+			return;
+		}
+
+		if (idx == 0)
+		{
+			mIPPS23RBbt->insertFirstInOrderNode(data);
 			return;
 		}
 
@@ -89,17 +89,18 @@ public:
 			throw std::runtime_error("out_of_range");
 		}
 
+		if (idx == mIPPS23RBbt->size() - 1)
+		{
+			mIPPS23RBbt->deleteLastInOrderNode();
+			return;
+		}
+
 		if (idx == 0)
 		{
 			mIPPS23RBbt->deleteFirstInOrderNode();
 			return;
 		}
 
-		if (idx == mIPPS23RBbt->size() - 1)
-		{
-			mIPPS23RBbt->deleteLastInOrderNode();
-			return;
-		}
 		// cout << "#################" << endl;
 		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, -1);
 		if (node->mLeftChild != mIPPS23RBbt->mNilSentinel)

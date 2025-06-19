@@ -605,18 +605,17 @@ private:
 		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(mFirstInOrderNode);
 		if (actualDeleteNode != mFirstInOrderNode)
 		{
-			IPPS23RBBTN *iNode = mFirstInOrderNode;
-			while (iNode->mParent)
-			{
-				if (iNode == iNode->mParent->mLeftChild)
-					iNode->mParent->mLeftSize -= 1;
-				iNode = iNode->mParent;
-			}
+			// IPPS23RBBTN *iNode = mFirstInOrderNode;
+			// while (iNode->mParent)
+			// {
+			// 	if (iNode == iNode->mParent->mLeftChild)
+			// 		iNode->mParent->mLeftSize -= 1;
+			// 	iNode = iNode->mParent;
+			// }
+			mFirstInOrderNode->mLeftSize++;
 		}
-		else
-		{
-			mGlobalLeftSize--;
-		}
+
+		mGlobalLeftSize--;
 
 		IPPS23RBBTN *theParent = deleteNodeAndGetParent(actualDeleteNode);
 		mFirstInOrderNode = theParent;
