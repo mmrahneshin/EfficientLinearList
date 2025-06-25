@@ -511,6 +511,7 @@ private:
 		IPPS23RBBTN *actualDeleteNode = theNode;
 		if (hasLeftChild(theNode))
 		{
+			theNode->mLeftSize--;
 			actualDeleteNode = theNode->mLeftChild;
 			while (hasRightChild(actualDeleteNode))
 			{
@@ -578,10 +579,6 @@ private:
 		IPPS23RBBTN *actualDeleteNode = getActualDeleteNode(mLastInOrderNode);
 
 		mInOrderEnd->mLeftSize--;
-		if (actualDeleteNode != mLastInOrderNode)
-		{
-			mLastInOrderNode->mLeftSize--;
-		}
 
 		IPPS23RBBTN *theParent = deleteNodeAndGetParent(actualDeleteNode);
 		mLastInOrderNode = theParent;

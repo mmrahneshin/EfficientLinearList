@@ -103,10 +103,6 @@ public:
 
 		// cout << "#################" << endl;
 		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, -1);
-		if (node->mLeftChild != mIPPS23RBbt->mNilSentinel)
-		{
-			node->mLeftSize -= 1;
-		}
 
 		mIPPS23RBbt->deleteNode(node);
 	}
@@ -141,7 +137,9 @@ private:
 	inline IPPS23RBBTN *getNodeWithUpdateLeftSize(int idx, int status)
 	{
 		IPPS23RBBTN *node = mIPPS23RBbt->mInOrderEnd;
+		node->mLeftSize += status;
 
+		node = node->mLeftChild;
 		int leftOnly = 1;
 		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
 		while (leftSize != idx)
