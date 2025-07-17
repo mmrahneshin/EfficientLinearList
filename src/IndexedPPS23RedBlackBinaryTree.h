@@ -346,7 +346,6 @@ private:
 	{
 		// IndexedBT updateAfterLL(node);
 		IPPS23RBBTN *A = node->mRightChild;
-		IPPS23RBBTN *C = A->mLeftChild;
 		A->mLeftSize -= node->mLeftSize + 1;
 
 		// PPS23RB updateAfterLL(node);
