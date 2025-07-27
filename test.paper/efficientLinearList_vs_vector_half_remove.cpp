@@ -337,7 +337,7 @@ int main()
 
     for (int step = 1; step <= 1000000; step *= 10)
     {
-        for (int size = step; size < step * 10 && size <= 3000000; size += step)
+        for (int size = step; size < step * 10 && size <= 2000000; size += step)
         {
             cout << size << endl;
             values = new int[size];
@@ -730,7 +730,7 @@ int main()
 
     auto saveMapToCSV = [](const map<int, double> *data, const string &filename)
     {
-        string fullPath = "/home/sepehr/uni/DS/paper/EfficientLinearList/timeTakenResults/half_remove/" + filename;
+        string fullPath = "/workspaces/EfficientLinearList/timeTakenResults/half_remove/" + filename;
         ofstream file(fullPath);
         if (file.is_open())
         {
