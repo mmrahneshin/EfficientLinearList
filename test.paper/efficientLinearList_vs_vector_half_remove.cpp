@@ -399,7 +399,7 @@ int main()
 
                     result = valueCheck(ell, vec, size / 2,
                                         get_after_popBackAfterPushBack_ellResult,
-                                        get_after_popBackAfterPushBack_ellResult);
+                                        get_after_popBackAfterPushBack_vecResult);
 
                     break;
                 case 2: // insert tests
@@ -438,7 +438,7 @@ int main()
                     removeFromVector(vec, size / 2, popFrontAfterPushBack_vecResult);
                     result = valueCheck(ell, vec, size / 2,
                                         get_after_popFrontAfterPushBack_ellResult,
-                                        get_after_popFrontAfterPushBack_ellResult);
+                                        get_after_popFrontAfterPushBack_vecResult);
 
                     break;
                 case 4: // insert tests

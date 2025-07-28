@@ -1,2 +1,4 @@
 build
 .vscode
+timeTakenResults/half_remove/plots
+timeTakenResults/remove_all/plots
