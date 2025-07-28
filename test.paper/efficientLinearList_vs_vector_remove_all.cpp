@@ -337,7 +337,7 @@ int main()
 
     for (int step = 1; step <= 1000000; step *= 10)
     {
-        for (int size = step; size < step * 10 && size <= 3000000; size += step)
+        for (int size = step; size < step * 10 && size <= 2000000; size += step)
         {
             cout << size << endl;
             values = new int[size];
@@ -535,7 +535,7 @@ int main()
                     //      << "10: test efficient linear list vs vector random indices remove" << endl;
                     for (int i = 0; i < size; i++)
                     {
-                        deleteIndexes[i] = rand() % (size - (i + 1));
+                        deleteIndexes[i] = rand() % (size - i);
                     }
                     removeFromEfficientLinearList(ell, size, removeRandomIndicesAfterPushBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
@@ -576,7 +576,7 @@ int main()
                     //      << "12: test efficient linear list vs vector random indices remove" << endl;
                     for (int i = 0; i < size; i++)
                     {
-                        deleteIndexes[i] = rand() % (size - (i + 1));
+                        deleteIndexes[i] = rand() % (size - i);
                     }
                     removeFromEfficientLinearList(ell, size, removeRandomIndices_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
@@ -711,7 +711,7 @@ int main()
 
     auto saveMapToCSV = [](const map<int, double> *data, const string &filename)
     {
-        string fullPath = "/home/sepehr/uni/DS/paper/EfficientLinearList/timeTakenResults/whole_remove/" + filename;
+        string fullPath = "/workspaces/EfficientLinearList/timeTakenResults/remove_all/" + filename;
         ofstream file(fullPath);
         if (file.is_open())
         {

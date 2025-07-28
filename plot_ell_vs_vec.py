@@ -4,7 +4,7 @@ import os
 import glob
 
 # Set the path to your CSV files
-csv_path = "/home/sepehr/uni/DS/paper/EfficientLinearList/timeTakenResults/half_remove/"
+csv_path = "/workspaces/EfficientLinearList/timeTakenResults/half_remove/"
 
 # Define the test categories and their corresponding file patterns
 test_categories = [
