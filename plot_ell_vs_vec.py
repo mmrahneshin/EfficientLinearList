@@ -4,7 +4,7 @@ import os
 import glob
 
 # Set the path to your CSV files
-csv_path = "/home/sepehr/uni/DS/paper/EfficientLinearList/timeTakenResults/remove_all/"
+csv_path = "/home/sepehr/uni/DS/paper/EfficientLinearList/timeTakenResults/half_remove/"
 
 # Define the test categories and their corresponding file patterns
 test_categories = [
@@ -41,95 +41,66 @@ test_categories = [
 
 
 def load_and_plot_comparison(test_name, title):
-    """Load ELL and Vector CSV files and create comparison plot with three broken y-axes."""
+    """Load ELL and Vector CSV files and create comparison plot"""
     ell_file = f"{csv_path}{test_name}_ell_results.csv"
     vec_file = f"{csv_path}{test_name}_vec_results.csv"
 
+    # Check if both files exist
     if not (os.path.exists(ell_file) and os.path.exists(vec_file)):
         print(f"Skipping {test_name}: Missing files")
         return
 
     try:
+        # Load data
         ell_data = pd.read_csv(ell_file)
         vec_data = pd.read_csv(vec_file)
 
-        # Create three subplots, sharing the same x-axis
-        fig, (ax1, ax2, ax3) = plt.subplots(
-            3,
-            1,
-            sharex=True,
-            figsize=(12, 10),
-            gridspec_kw={"height_ratios": [2, 1, 1]},
+        # Create the plot
+        plt.figure(figsize=(12, 8))
+
+        # Plot both datasets
+        plt.plot(
+            ell_data["Size"],
+            ell_data["Time"],
+            label="EfficientLinearList",
+            marker="o",
+            linewidth=2,
+            markersize=4,
+        )
+        plt.plot(
+            vec_data["Size"],
+            vec_data["Time"],
+            label="Vector",
+            marker="s",
+            linewidth=2,
+            markersize=4,
         )
 
-        # Plot both datasets on all axes
-        for ax in (ax1, ax2, ax3):
-            ax.plot(
-                ell_data["Size"],
-                ell_data["Time"],
-                label="EfficientLinearList",
-                marker="o",
-                linewidth=2,
-                markersize=4,
-            )
-            ax.plot(
-                vec_data["Size"],
-                vec_data["Time"],
-                label="Vector",
-                marker="s",
-                linewidth=2,
-                markersize=4,
-            )
-            ax.grid(True, alpha=0.3)
+        plt.xscale("log")
+        plt.yscale("log")
 
-        # Set y-limits for each subplot
-        ax1.set_ylim(20, 150)
-        ax2.set_ylim(1, 20)
-        ax3.set_ylim(0, 1)
-
-        # Hide the spines between axes
-        ax1.spines["bottom"].set_visible(False)
-        ax2.spines["top"].set_visible(False)
-        ax2.spines["bottom"].set_visible(False)
-        ax3.spines["top"].set_visible(False)
-        ax1.tick_params(labeltop=False)
-        ax2.tick_params(labeltop=False)
-        ax3.xaxis.tick_bottom()
-
-        # Diagonal lines to indicate the breaks
-        d = 0.015
-        kwargs = dict(color="k", clip_on=False)
-        # Between ax1 and ax2
-        ax1.plot((-d, +d), (-d, +d), transform=ax1.transAxes, **kwargs)
-        ax1.plot((1 - d, 1 + d), (-d, +d), transform=ax1.transAxes, **kwargs)
-        ax2.plot((-d, +d), (1 - d, 1 + d), transform=ax2.transAxes, **kwargs)
-        ax2.plot((1 - d, 1 + d), (1 - d, 1 + d), transform=ax2.transAxes, **kwargs)
-        # Between ax2 and ax3
-        ax2.plot((-d, +d), (-d, +d), transform=ax2.transAxes, **kwargs)
-        ax2.plot((1 - d, 1 + d), (-d, +d), transform=ax2.transAxes, **kwargs)
-        ax3.plot((-d, +d), (1 - d, 1 + d), transform=ax3.transAxes, **kwargs)
-        ax3.plot((1 - d, 1 + d), (1 - d, 1 + d), transform=ax3.transAxes, **kwargs)
-
-        # Labels and title
-        ax3.set_xlabel("Size (log scale)", fontsize=12)
-        ax1.set_ylabel("Time (seconds)", fontsize=12)
-        ax2.set_ylabel("Time (seconds)", fontsize=12)
-        ax3.set_ylabel("Time (seconds)", fontsize=12)
-        ax1.set_title(
+        # Customize the plot
+        plt.xlabel("Size", fontsize=12)
+        plt.ylabel("Time (seconds)", fontsize=12)
+        plt.title(
             f"{title}\nEfficientLinearList vs Vector Performance",
             fontsize=14,
             fontweight="bold",
         )
-        ax3.legend(fontsize=11)
+        plt.legend(fontsize=11)
+        plt.grid(True, alpha=0.3)
 
-        # X axis log scale
-        ax3.set_xscale("log")
+        # Remove log scale logic
 
+        # Improve layout
         plt.tight_layout()
+
+        # Save the plot
         output_file = f"{csv_path}plots/{test_name}_comparison.png"
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
         plt.savefig(output_file, dpi=300, bbox_inches="tight")
-        # plt.show()
+        plt.show()
+
         print(f"Saved plot: {output_file}")
 
     except Exception as e:
