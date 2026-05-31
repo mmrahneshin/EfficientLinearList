@@ -40,8 +40,8 @@ test_categories = [
 ]
 
 
-def load_and_plot_comparison(test_name, title):
-    """Load ELL and Vector CSV files and create comparison plot"""
+def load_and_plot_comparison_linear(test_name, title):
+    """Load ELL and Vector CSV files and create comparison plot with linear scale"""
     ell_file = f"{csv_path}{test_name}_ell_results.csv"
     vec_file = f"{csv_path}{test_name}_vec_results.csv"
 
@@ -76,30 +76,28 @@ def load_and_plot_comparison(test_name, title):
             markersize=4,
         )
 
+        # Linear scale (no log transformation)
         plt.xscale("log")
-        plt.yscale("log")
 
         # Customize the plot
         plt.xlabel("Size", fontsize=12)
         plt.ylabel("Time (seconds)", fontsize=12)
         plt.title(
-            f"{title}\nEfficientLinearList vs std::vector Performance (Logarithmic Scale)",
+            f"{title}\nEfficientLinearList vs std::vector Performance (Linear Scale)",
             fontsize=14,
             fontweight="bold",
         )
         plt.legend(fontsize=11)
         plt.grid(True, alpha=0.3)
 
-        # Remove log scale logic
-
         # Improve layout
         plt.tight_layout()
 
         # Save the plot
-        output_file = f"{csv_path}plots/{test_name}_comparison.png"
+        output_file = f"{csv_path}plots_linear/{test_name}_comparison_linear.png"
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
         plt.savefig(output_file, dpi=300, bbox_inches="tight")
-        # plt.show()
+        plt.close()
 
         print(f"Saved plot: {output_file}")
 
@@ -107,8 +105,8 @@ def load_and_plot_comparison(test_name, title):
         print(f"Error processing {test_name}: {e}")
 
 
-def create_summary_plot():
-    """Create a summary plot showing performance ratios"""
+def create_summary_plot_linear():
+    """Create a summary plot showing performance ratios with linear scale"""
     plt.figure(figsize=(15, 10))
 
     operation_types = ["Insert", "Remove", "Get"]
@@ -164,7 +162,7 @@ def create_summary_plot():
 
         plt.xlabel("Size")
         plt.ylabel("Performance Ratio (Vector/ELL)")
-        plt.title(f"{op_type} Operations (Logarithmic Scale)\nVector Time / ELL Time")
+        plt.title(f"{op_type} Operations (Linear Scale)\nVector Time / ELL Time")
         plt.legend(fontsize=8)
         plt.grid(True, alpha=0.3)
         plt.axhline(
@@ -172,21 +170,24 @@ def create_summary_plot():
         )
 
     plt.tight_layout()
-    output_file = f"{csv_path}plots/performance_summary.png"
+    output_file = f"{csv_path}plots_linear/performance_summary_linear.png"
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
     plt.savefig(output_file, dpi=300, bbox_inches="tight")
-    # plt.show()
+    plt.close()
     print(f"Saved summary plot: {output_file}")
 
 
 # Main execution
 if __name__ == "__main__":
-    print("Creating comparison plots for EfficientLinearList vs Vector...")
+    print(
+        "Creating comparison plots (Linear Scale) for EfficientLinearList vs Vector..."
+    )
 
     # Create individual comparison plots
     for test_name, title in test_categories:
-        load_and_plot_comparison(test_name, title)
+        load_and_plot_comparison_linear(test_name, title)
 
     # Create summary plot
-    create_summary_plot()
+    create_summary_plot_linear()
 
-    print("All plots have been generated!")
+    print("All linear scale plots have been generated!")
