@@ -4,16 +4,16 @@
 #include <Python.h> // For PyObject*
 #include "indexed_PPS23RB_binaryTree.h"
 
-typedef struct EfficientLinearList
+typedef struct EfficientList
 {
     IPPRBBT *mIPPS23RBbt;
-} EfficientLinearList;
+} EfficientList;
 
-EfficientLinearList *efficient_list_new(void);
-void efficient_list_free(EfficientLinearList *self);
-void efficient_list_insert(EfficientLinearList *el, Py_ssize_t idx, PyObject *data);
-void efficient_list_remove(EfficientLinearList *el, Py_ssize_t idx);
+EfficientList *efficient_list_new(void);
+void efficient_list_free(EfficientList *self);
+void efficient_list_insert(EfficientList *el, Py_ssize_t idx, PyObject *data);
+void efficient_list_remove(EfficientList *el, Py_ssize_t idx);
 
-PyObject *efficient_list_get_item(EfficientLinearList *el, Py_ssize_t idx);
-Py_ssize_t efficient_list_size(EfficientLinearList *el);
+PyObject *efficient_list_get_item(EfficientList *el, Py_ssize_t idx);
+Py_ssize_t efficient_list_size(EfficientList *el);
 #endif

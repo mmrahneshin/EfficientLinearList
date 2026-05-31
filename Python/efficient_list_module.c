@@ -5,7 +5,7 @@
 // Define Python wrapper object
 typedef struct
 {
-    PyObject_HEAD EfficientLinearList *el;
+    PyObject_HEAD EfficientList *el;
 } EfficientListObject;
 
 // Deallocation

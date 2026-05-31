@@ -20,7 +20,7 @@ int *deleteIndexes;
 clock_t start, end_clock;
 double timeTaken;
 
-void insertToEfficientLinearList(EfficientLinearList *ell, int size)
+void insertToEfficientList(EfficientList *ell, int size)
 {
     start = clock();
     for (int i = 0; i < size; i++)
@@ -35,7 +35,7 @@ void insertToEfficientLinearList(EfficientLinearList *ell, int size)
     }
     end_clock = clock();
     timeTaken = double(end_clock - start) / double(CLOCKS_PER_SEC);
-    cout << "insert time taken efficient linear list: " << timeTaken << endl;
+    cout << "insert time taken efficient list: " << timeTaken << endl;
 }
 
 void insertToVector(vector<int> *vec, int size)
@@ -75,11 +75,11 @@ void pushBackToList(int i, list<int> *lst, int size)
     cout << "insert time taken list (push_back): " << timeTaken << endl;
 }
 
-bool valueCheck(EfficientLinearList *ell, vector<int> *vec, int size)
+bool valueCheck(EfficientList *ell, vector<int> *vec, int size)
 {
 
     bool result = true;
-    // cout << "\n**efficient linear list :\nYours\tCorrect" << endl;
+    // cout << "\n**efficient list :\nYours\tCorrect" << endl;
     double ellTimeTaken = 0;
     double vectorTimeTaken = 0;
     int ellValue, vectorValue;
@@ -108,7 +108,7 @@ bool valueCheck(EfficientLinearList *ell, vector<int> *vec, int size)
     return result;
 }
 
-bool valueCheck(EfficientLinearList *ell, list<int> *lst, int size)
+bool valueCheck(EfficientList *ell, list<int> *lst, int size)
 {
     bool result = true;
     double ellTimeTaken = 0;
@@ -141,7 +141,7 @@ bool valueCheck(EfficientLinearList *ell, list<int> *lst, int size)
     return result;
 }
 
-void removeFromEfficientLinearList(EfficientLinearList *ell, int deleteIndexesSize)
+void removeFromEfficientList(EfficientList *ell, int deleteIndexesSize)
 {
     start = clock();
     for (int i = 0; i < deleteIndexesSize; i++)
@@ -156,7 +156,7 @@ void removeFromEfficientLinearList(EfficientLinearList *ell, int deleteIndexesSi
     }
     end_clock = clock();
     timeTaken = double(end_clock - start) / double(CLOCKS_PER_SEC);
-    cout << "remove time taken efficient linear list: " << timeTaken << endl;
+    cout << "remove time taken efficient list: " << timeTaken << endl;
 }
 
 void removeFromVector(vector<int> *vec, int deleteIndexesSize)
@@ -211,7 +211,7 @@ int main()
     }
 
     bool result = true;
-    EfficientLinearList *ell;
+    EfficientList *ell;
     vector<int> *vec;
     list<int> *lst;
 
@@ -225,10 +225,10 @@ int main()
         {
         case 0: // insert tests
             cout << endl
-                 << "1: test efficient linear list vs list push_back insert" << endl;
+                 << "1: test efficient list vs list push_back insert" << endl;
             ell = efficient_list_new();
             lst = new list<int>();
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -242,12 +242,12 @@ int main()
             break;
         case 1: // remove tests
             cout << endl
-                 << "2: test efficient linear list vs list pop_back" << endl;
+                 << "2: test efficient list vs list pop_back" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = size - (i + 1);
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -262,10 +262,10 @@ int main()
             break;
         case 2: // insert tests
             cout << endl
-                 << "3: test efficient linear list vs vector push_back insert" << endl;
+                 << "3: test efficient list vs vector push_back insert" << endl;
             ell = efficient_list_new();
             lst = new list<int>();
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -279,12 +279,12 @@ int main()
             break;
         case 3: // remove tests
             cout << endl
-                 << "4: test efficient linear list vs vector pop_front" << endl;
+                 << "4: test efficient list vs vector pop_front" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = 0;
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -299,14 +299,14 @@ int main()
             break;
         case 4: // insert tests
             cout << endl
-                 << "5: test efficient linear list vs list push_front" << endl;
+                 << "5: test efficient list vs list push_front" << endl;
             ell = efficient_list_new();
             lst = new list<int>();
             for (int i = 0; i < size; i++)
             {
                 indexes[i] = 0;
             }
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -320,8 +320,8 @@ int main()
             break;
         case 5: // remove tests
             cout << endl
-                 << "6: test efficient linear list vs list begin pop_front" << endl;
-            removeFromEfficientLinearList(ell, size / 2);
+                 << "6: test efficient list vs list begin pop_front" << endl;
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -335,11 +335,11 @@ int main()
             break;
         case 6: // insert tests
             cout << endl
-                 << "7: test efficient linear list vs list push_front" << endl;
+                 << "7: test efficient list vs list push_front" << endl;
             ell = efficient_list_new();
             lst = new list<int>();
 
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -353,12 +353,12 @@ int main()
             break;
         case 7: // remove tests
             cout << endl
-                 << "8: test efficient linear list vs list begin pop_back" << endl;
+                 << "8: test efficient list vs list begin pop_back" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = size - (i + 1);
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -372,14 +372,14 @@ int main()
             break;
         case 8: // insert tests
             cout << endl
-                 << "9: test efficient linear list vs vector push_back" << endl;
+                 << "9: test efficient list vs vector push_back" << endl;
             ell = efficient_list_new();
             vec = new vector<int>();
             for (int i = 0; i < size; i++)
             {
                 indexes[i] = i;
             }
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -393,12 +393,12 @@ int main()
             break;
         case 9: // remove tests
             cout << endl
-                 << "10: test efficient linear list vs vector random indices remove" << endl;
+                 << "10: test efficient list vs vector random indices remove" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = rand() % (size - (i + 1));
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -412,12 +412,12 @@ int main()
             break;
         case 10: // insert tests
             cout << endl
-                 << "11: test efficient linear list vs vector random indices insert" << endl;
+                 << "11: test efficient list vs vector random indices insert" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 indexes[i] = rand() % (i + 1);
             }
-            insertToEfficientLinearList(ell, size / 2);
+            insertToEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -431,12 +431,12 @@ int main()
             break;
         case 11: // remove tests
             cout << endl
-                 << "12: test efficient linear list vs vector random indices remove" << endl;
+                 << "12: test efficient list vs vector random indices remove" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = rand() % (size - (i + 1));
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -451,7 +451,7 @@ int main()
 
         case 12: // insert tests
             cout << endl
-                 << "13: test efficient linear list vs list half push_front then push_back the other half" << endl;
+                 << "13: test efficient list vs list half push_front then push_back the other half" << endl;
             ell = efficient_list_new();
             lst = new list<int>();
             for (int i = 0; i < size / 2; i++)
@@ -460,7 +460,7 @@ int main()
                 indexes[i + size / 2] = i + size / 2;
             }
 
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -475,13 +475,13 @@ int main()
             break;
         case 13: // remove tests
             cout << endl
-                 << "14: test efficient linear list vs list begin half pop_front then pop_back the other half" << endl;
+                 << "14: test efficient list vs list begin half pop_front then pop_back the other half" << endl;
             for (int i = 0; i < size / 4; i++)
             {
                 deleteIndexes[i] = 0;
                 deleteIndexes[i + size / 4] = size - (i + size / 4 + 1);
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -496,7 +496,7 @@ int main()
             break;
         case 14: // insert tests
             cout << endl
-                 << "15: test efficient linear list vs list half push_back then push_front the other half" << endl;
+                 << "15: test efficient list vs list half push_back then push_front the other half" << endl;
             ell = efficient_list_new();
             lst = new list<int>();
             for (int i = 0; i < size / 2; i++)
@@ -505,7 +505,7 @@ int main()
                 indexes[i + size / 2] = 0;
             }
 
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -520,13 +520,13 @@ int main()
             break;
         case 15: // remove tests
             cout << endl
-                 << "16: test efficient linear list vs list begin half pop_back then pop_front the other half" << endl;
+                 << "16: test efficient list vs list begin half pop_back then pop_front the other half" << endl;
             for (int i = 0; i < size / 4; i++)
             {
                 deleteIndexes[i] = size - (i + 1);
                 deleteIndexes[i + size / 4] = 0;
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
             // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
             // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;

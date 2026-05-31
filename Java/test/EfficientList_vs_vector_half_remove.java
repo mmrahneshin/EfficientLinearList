@@ -2,7 +2,7 @@ import java.util.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 
-public class EfficientLinearList_vs_vector_half_remove {
+public class EfficientList_vs_vector_half_remove {
         static int[] values;
         static int[] indexes;
         static int[] deleteIndexes;
@@ -26,7 +26,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                 return cur / 1024.0;
         }
 
-        private static void insertToEfficientLinearList(EfficientLinearList<Integer> ell, int size,
+        private static void insertToEfficientList(EfficientList<Integer> ell, int size,
                         Map<Integer, Double> timeTakenMap, Map<Integer, Double> memoryUsed_map)
                         throws IllegalAccessException {
 
@@ -52,7 +52,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                 if (memoryUsed_map != null) {
                         memoryUsed_map.put(size, memoryUsed);
                 }
-                // System.out.println("insert time taken efficient linear list: " + timeTaken);
+                // System.out.println("insert time taken efficient list: " + timeTaken);
         }
 
         private static void insertToVector(ArrayList<Integer> vec, int size, Map<Integer, Double> timeTakenMap,
@@ -79,7 +79,7 @@ public class EfficientLinearList_vs_vector_half_remove {
         }
 
         private static boolean valueCheck(
-                        EfficientLinearList<Integer> ell,
+                        EfficientList<Integer> ell,
                         ArrayList<Integer> vec,
                         int size,
                         Map<Integer, Double> ellTimeTakenMap,
@@ -96,7 +96,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                         }
                 }
 
-                // Measure EfficientLinearList get time
+                // Measure EfficientList get time
                 long startTime = System.nanoTime();
                 for (int i = 0; i < size; i++) {
                         ellValue = ell.get(i);
@@ -127,7 +127,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                 return result;
         }
 
-        private static void removeFromEfficientLinearList(EfficientLinearList<Integer> ell, int deleteIndexesSize,
+        private static void removeFromEfficientList(EfficientList<Integer> ell, int deleteIndexesSize,
                         Map<Integer, Double> timeTakenMap, Map<Integer, Double> memoryUsed_map)
                         throws IllegalAccessException {
                 double startMemory = getStableHeapUsedKB();
@@ -149,7 +149,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                 if (memoryUsed_map != null) {
                         memoryUsed_map.put(deleteIndexesSize, memoryUsed);
                 }
-                // System.out.println("remove time taken efficient linear list: " + timeTaken);
+                // System.out.println("remove time taken efficient list: " + timeTaken);
         }
 
         private static void removeFromVector(ArrayList<Integer> vec, int deleteIndexesSize,
@@ -325,7 +325,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                                 }
 
                                 boolean result = true;
-                                EfficientLinearList<Integer> ell;
+                                EfficientList<Integer> ell;
                                 ArrayList<Integer> vec;
 
                                 System.out.println(
@@ -336,10 +336,10 @@ public class EfficientLinearList_vs_vector_half_remove {
                                         switch (input) {
                                                 case 0:
                                                         System.out.println(
-                                                                        "\n1: test efficient linear list vs vector push_back then pop_back");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n1: test efficient list vs vector push_back then pop_back");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
-                                                        insertToEfficientLinearList(ell, size, pushBack_ellResult,
+                                                        insertToEfficientList(ell, size, pushBack_ellResult,
                                                                         pushBack_ell_memoryResult);
                                                         insertToVector(vec, size, pushBack_vecResult,
                                                                         pushBack_vec_memoryResult);
@@ -353,7 +353,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 deleteIndexes[i] = size - (i + 1);
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         popBackAfterPushBack_ellResult,
                                                                         popBackAfterPushBack_ell_memoryResult);
                                                         removeFromVector(vec, size / 2, popBackAfterPushBack_vecResult,
@@ -365,16 +365,16 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                         break;
                                                 case 1:
                                                         System.out.println(
-                                                                        "\n2: test efficient linear list vs vector push_back then pop_front");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n2: test efficient list vs vector push_back then pop_front");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
-                                                        insertToEfficientLinearList(ell, size, null, null);
+                                                        insertToEfficientList(ell, size, null, null);
                                                         insertToVector(vec, size, null, null);
 
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 deleteIndexes[i] = 0;
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         popFrontAfterPushBack_ellResult,
                                                                         popFrontAfterPushBack_ell_memoryResult);
                                                         removeFromVector(vec, size / 2, popFrontAfterPushBack_vecResult,
@@ -385,16 +385,16 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                         break;
                                                 case 2:
                                                         System.out.println(
-                                                                        "\n3: test efficient linear list vs vector push_back then random indices remove");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n3: test efficient list vs vector push_back then random indices remove");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
-                                                        insertToEfficientLinearList(ell, size, null, null);
+                                                        insertToEfficientList(ell, size, null, null);
                                                         insertToVector(vec, size, null, null);
 
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 deleteIndexes[i] = rand.nextInt(size - (i + 1));
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         removeRandomIndicesAfterPushBack_ellResult,
                                                                         removeRandomIndicesAfterPushBack_ell_memoryResult);
                                                         removeFromVector(vec, size / 2,
@@ -406,13 +406,13 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                         break;
                                                 case 3:
                                                         System.out.println(
-                                                                        "\n4: test efficient linear list vs vector push_front then pop_front");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n4: test efficient list vs vector push_front then pop_front");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
                                                         for (int i = 0; i < size; i++) {
                                                                 indexes[i] = 0;
                                                         }
-                                                        insertToEfficientLinearList(ell, size, pushFront_ellResult,
+                                                        insertToEfficientList(ell, size, pushFront_ellResult,
                                                                         pushFront_ell_memoryResult);
                                                         insertToVector(vec, size, pushFront_vecResult,
                                                                         pushFront_vec_memoryResult);
@@ -426,7 +426,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 deleteIndexes[i] = 0;
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         popFrontAfterPushFront_ellResult,
                                                                         popFrontAfterPushFront_ell_memoryResult);
                                                         removeFromVector(vec, size / 2,
@@ -439,16 +439,16 @@ public class EfficientLinearList_vs_vector_half_remove {
 
                                                 case 4:
                                                         System.out.println(
-                                                                        "\n5: test efficient linear list vs vector push_front then pop_back");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n5: test efficient list vs vector push_front then pop_back");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
-                                                        insertToEfficientLinearList(ell, size, null, null);
+                                                        insertToEfficientList(ell, size, null, null);
                                                         insertToVector(vec, size, null, null);
 
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 deleteIndexes[i] = size - (i + 1);
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         popBackAfterPushFront_ellResult,
                                                                         popBackAfterPushFront_ell_memoryResult);
                                                         removeFromVector(vec, size / 2, popBackAfterPushFront_vecResult,
@@ -460,14 +460,14 @@ public class EfficientLinearList_vs_vector_half_remove {
 
                                                 case 5:
                                                         System.out.println(
-                                                                        "\n6: test efficient linear list vs vector random indices insert then random indices remove");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n6: test efficient list vs vector random indices insert then random indices remove");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
 
                                                         for (int i = 0; i < size; i++) {
                                                                 indexes[i] = rand.nextInt(i + 1);
                                                         }
-                                                        insertToEfficientLinearList(ell, size,
+                                                        insertToEfficientList(ell, size,
                                                                         insertRandomIndices_ellResult,
                                                                         insertRandomIndices_ell_memoryResult);
                                                         insertToVector(vec, size, insertRandomIndices_vecResult,
@@ -481,7 +481,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 deleteIndexes[i] = rand.nextInt(size - (i + 1));
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         removeRandomIndices_ellResult,
                                                                         removeRandomIndices_ell_memoryResult);
                                                         removeFromVector(vec, size / 2, removeRandomIndices_vecResult,
@@ -493,14 +493,14 @@ public class EfficientLinearList_vs_vector_half_remove {
 
                                                 case 6:
                                                         System.out.println(
-                                                                        "\n7: test efficient linear list vs vector half push_front then push_back the other half, then half pop_front then pop_back the other half");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n7: test efficient list vs vector half push_front then push_back the other half, then half pop_front then pop_back the other half");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 indexes[i] = 0;
                                                                 indexes[i + size / 2] = i + size / 2;
                                                         }
-                                                        insertToEfficientLinearList(ell, size,
+                                                        insertToEfficientList(ell, size,
                                                                         pushFront_pushBack_ellResult,
                                                                         pushFront_pushBack_ell_memoryResult);
                                                         insertToVector(vec, size, pushFront_pushBack_vecResult,
@@ -516,7 +516,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                                 deleteIndexes[i] = 0;
                                                                 deleteIndexes[i + size / 4] = size - (i + size / 4 + 1);
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         popFront_popBack_ellResult,
                                                                         popFront_popBack_ell_memoryResult);
                                                         removeFromVector(vec, size / 2, popFront_popBack_vecResult,
@@ -529,14 +529,14 @@ public class EfficientLinearList_vs_vector_half_remove {
 
                                                 case 7:
                                                         System.out.println(
-                                                                        "\n8: test efficient linear list vs vector half push_back then push_front the other half, then half pop_back then pop_front the other half");
-                                                        ell = new EfficientLinearList<>();
+                                                                        "\n8: test efficient list vs vector half push_back then push_front the other half, then half pop_back then pop_front the other half");
+                                                        ell = new EfficientList<>();
                                                         vec = new ArrayList<>();
                                                         for (int i = 0; i < size / 2; i++) {
                                                                 indexes[i] = i;
                                                                 indexes[i + size / 2] = 0;
                                                         }
-                                                        insertToEfficientLinearList(ell, size,
+                                                        insertToEfficientList(ell, size,
                                                                         pushBack_pushFront_ellResult,
                                                                         pushBack_pushFront_ell_memoryResult);
                                                         insertToVector(vec, size, pushBack_pushFront_vecResult,
@@ -551,7 +551,7 @@ public class EfficientLinearList_vs_vector_half_remove {
                                                                 deleteIndexes[i] = size - (i + 1);
                                                                 deleteIndexes[i + size / 4] = 0;
                                                         }
-                                                        removeFromEfficientLinearList(ell, size / 2,
+                                                        removeFromEfficientList(ell, size / 2,
                                                                         popBack_popFront_ellResult,
                                                                         popBack_popFront_ell_memoryResult);
                                                         removeFromVector(vec, size / 2, popBack_popFront_vecResult,

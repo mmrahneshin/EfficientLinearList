@@ -253,7 +253,7 @@ def main():
 
             for input_test in range(0, 14):
                 if input_test == 0:
-                    print("\n1: test efficient linear list vs list push_back insert")
+                    print("\n1: test efficient list vs list push_back insert")
                     ell = EfficientList()
                     lst = []
                     insert_to_efficient_linear_list(ell, size, "push_back_efficient")
@@ -267,7 +267,7 @@ def main():
                     )
 
                 elif input_test == 1:
-                    print("\n2: test efficient linear list vs list pop_back")
+                    print("\n2: test efficient list vs list pop_back")
                     for i in range(size // 2):
                         delete_indexes[i] = size - (i + 1)
                     remove_from_efficient_linear_list(
@@ -283,7 +283,7 @@ def main():
                     )
 
                 elif input_test == 2:
-                    print("\n3: test efficient linear list vs list pop_front")
+                    print("\n3: test efficient list vs list pop_front")
                     ell = EfficientList()
                     lst = []
                     insert_to_efficient_linear_list(ell, size)
@@ -304,7 +304,7 @@ def main():
                     )
 
                 elif input_test == 3:
-                    print("\n4: test efficient linear list vs list push_front")
+                    print("\n4: test efficient list vs list push_front")
                     ell = EfficientList()
                     lst = []
                     for i in range(size):
@@ -320,7 +320,7 @@ def main():
                     )
 
                 elif input_test == 4:
-                    print("\n5: test efficient linear list vs list pop_front")
+                    print("\n5: test efficient list vs list pop_front")
                     remove_from_efficient_linear_list(
                         ell, size // 2, "pop_front_after_push_front_efficient"
                     )
@@ -334,7 +334,7 @@ def main():
                     )
 
                 elif input_test == 5:
-                    print("\n6: test efficient linear list vs list pop_back")
+                    print("\n6: test efficient list vs list pop_back")
                     ell = EfficientList()
                     lst = []
                     insert_to_efficient_linear_list(ell, size)
@@ -356,7 +356,7 @@ def main():
 
                 elif input_test == 6:
                     print(
-                        "\n7: test efficient linear list vs list random indices remove after push_back"
+                        "\n7: test efficient list vs list random indices remove after push_back"
                     )
                     ell = EfficientList()
                     lst = []
@@ -383,7 +383,7 @@ def main():
 
                 elif input_test == 7:
                     print(
-                        "\n8: test efficient linear list vs list random indices insert"
+                        "\n8: test efficient list vs list random indices insert"
                     )
                     ell = EfficientList()
                     lst = []
@@ -403,7 +403,7 @@ def main():
 
                 elif input_test == 8:
                     print(
-                        "\n9: test efficient linear list vs list random indices remove after random insert"
+                        "\n9: test efficient list vs list random indices remove after random insert"
                     )
                     for i in range(size // 2):
                         delete_indexes[i] = random.randint(0, size - (i + 1))
@@ -421,7 +421,7 @@ def main():
 
                 elif input_test == 9:
                     print(
-                        "\n10: test efficient linear list vs list half push_front then push_back the other half"
+                        "\n10: test efficient list vs list half push_front then push_back the other half"
                     )
                     ell = EfficientList()
                     lst = []
@@ -442,7 +442,7 @@ def main():
 
                 elif input_test == 11:
                     print(
-                        "\n12: test efficient linear list vs list begin half pop_front then pop_back the other half"
+                        "\n12: test efficient list vs list begin half pop_front then pop_back the other half"
                     )
                     for i in range(size // 4):
                         delete_indexes[i] = 0
@@ -461,7 +461,7 @@ def main():
 
                 elif input_test == 12:
                     print(
-                        "\n13: test efficient linear list vs list half push_back then push_front the other half"
+                        "\n13: test efficient list vs list half push_back then push_front the other half"
                     )
                     ell = EfficientList()
                     lst = []
@@ -482,7 +482,7 @@ def main():
 
                 elif input_test == 13:
                     print(
-                        "\n14: test efficient linear list vs list begin half pop_back then pop_front the other half"
+                        "\n14: test efficient list vs list begin half pop_back then pop_front the other half"
                     )
                     for i in range(size // 4):
                         delete_indexes[i] = size - (i + 1)

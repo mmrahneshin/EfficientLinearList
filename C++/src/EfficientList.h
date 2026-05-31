@@ -5,18 +5,18 @@
 #pragma once
 
 template <class T>
-class EfficientLinearList
+class EfficientList
 {
 public:
 	typedef IndexedPPS23RedBlackBinaryTree<T> BT;
 	typedef IndexedPPS23RBBinaryTreeNode<T> IPPS23RBBTN;
 
-	EfficientLinearList(void)
+	EfficientList(void)
 	{
 		mIPPS23RBbt = new BT();
 	}
 
-	~EfficientLinearList(void)
+	~EfficientList(void)
 	{
 		delete mIPPS23RBbt;
 	}
@@ -27,34 +27,31 @@ public:
 		{
 			throw std::runtime_error("out_of_range");
 		}
-		mIPPS23RBbt->drawTreeAndSave("insert/", "Insert" + to_string(data) + "-Start", data);
+
 		if (mIPPS23RBbt->size() == 0)
 		{
 			mIPPS23RBbt->insertRootNode(data);
-			mIPPS23RBbt->drawTreeAndSave("insert/", "Insert" + to_string(data) + "-After-bottom-up-pass", data);
-			return;
-		}
-
-		if (idx == 0)
-		{
-			mIPPS23RBbt->insertFirstInOrderNode(data);
-			mIPPS23RBbt->drawTreeAndSave("insert/", "Insert" + to_string(data) + "-After-bottom-up-pass", data);
 			return;
 		}
 
 		if (idx == mIPPS23RBbt->size())
 		{
 			mIPPS23RBbt->insertLastInOrderNode(data);
-			mIPPS23RBbt->drawTreeAndSave("insert/", "Insert" + to_string(data) + "-After-bottom-up-pass", data);
+			return;
+		}
+
+		if (idx == 0)
+		{
+			mIPPS23RBbt->insertFirstInOrderNode(data);
 			return;
 		}
 
 		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, 1);
+		node->mLeftSize += 1;
+
 		if (!mIPPS23RBbt->hasLeftChild(node))
 		{
 			mIPPS23RBbt->insertLeftChild(node, data);
-			mIPPS23RBbt->drawTreeAndSave("insert/", "Insert" + to_string(data) + "-After-bottom-up-pass", data);
-			return;
 		}
 		else
 		{
@@ -62,8 +59,6 @@ public:
 			while (mIPPS23RBbt->hasRightChild(node))
 				node = node->mRightChild;
 			mIPPS23RBbt->insertRightChild(node, data);
-			mIPPS23RBbt->drawTreeAndSave("insert/", "Insert" + to_string(data) + "-After-bottom-up-pass", data);
-			return;
 		}
 	}
 	// double getTimeTaken()
@@ -93,24 +88,23 @@ public:
 		{
 			throw std::runtime_error("out_of_range");
 		}
-		if (idx == 0)
-		{
-			mIPPS23RBbt->deleteFirstInOrderNode();
-			return;
-		}
 
 		if (idx == mIPPS23RBbt->size() - 1)
 		{
 			mIPPS23RBbt->deleteLastInOrderNode();
 			return;
 		}
+
+		if (idx == 0)
+		{
+			mIPPS23RBbt->deleteFirstInOrderNode();
+			return;
+		}
+
 		// cout << "#################" << endl;
 		IPPS23RBBTN *node = getNodeWithUpdateLeftSize(idx, -1);
-		int data = node->mData;
-		mIPPS23RBbt->drawTreeAndSave("remove/", "Remove" + to_string(data) + "-Start", data);
 
 		mIPPS23RBbt->deleteNode(node);
-		mIPPS23RBbt->drawTreeAndSave("remove/", "Remove" + to_string(data) + "-After-Bottom-up-pass", data);
 	}
 
 	int size() const
@@ -122,7 +116,7 @@ public:
 	// {
 	// 	return mIPPS23RBbt->depthCalc(mIPPS23RBbt->getRootNode(), 1);
 	// };
-	//  void drawTree()
+	// void drawTree()
 	// {
 	// 	mIPPS23RBbt->draw(cout);
 	// }
@@ -143,17 +137,11 @@ private:
 	inline IPPS23RBBTN *getNodeWithUpdateLeftSize(int idx, int status)
 	{
 		IPPS23RBBTN *node = mIPPS23RBbt->mInOrderEnd;
-		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
 		node->mLeftSize += status;
-		if (leftSize != idx)
-		{
-			node = mIPPS23RBbt->mPostOrderEnd->mRightChild;
-		}
-		else
-			return node;
 
+		node = node->mLeftChild;
 		int leftOnly = 1;
-		leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
+		int leftSize = node->mLeftSize + mIPPS23RBbt->mGlobalLeftSize;
 		while (leftSize != idx)
 		{
 			if (idx < leftSize)
@@ -169,7 +157,6 @@ private:
 			}
 			leftSize = node->mLeftSize + (mIPPS23RBbt->mGlobalLeftSize * leftOnly);
 		}
-		node->mLeftSize += status;
 		return node;
 	}
 

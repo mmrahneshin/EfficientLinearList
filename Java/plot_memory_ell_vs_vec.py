@@ -48,7 +48,7 @@ def load_and_plot_comparison(test_name, title):
         plt.plot(
             ell_data["Size"],
             ell_data["Time"],
-            label="EfficientLinearList",
+            label="EfficientList",
             marker="o",
             linewidth=2,
             markersize=4,
@@ -69,7 +69,7 @@ def load_and_plot_comparison(test_name, title):
         plt.xlabel("Size", fontsize=12)
         plt.ylabel("Memory (KB)", fontsize=12)
         plt.title(
-            f"{title}\nEfficientLinearList vs ArrayList Performance",
+            f"{title}\nEfficientList vs ArrayList Performance",
             fontsize=14,
             fontweight="bold",
         )
@@ -166,7 +166,7 @@ def create_summary_plot():
 
 # Main execution
 if __name__ == "__main__":
-    print("Creating comparison plots for EfficientLinearList vs ArrayList...")
+    print("Creating comparison plots for EfficientList vs ArrayList...")
 
     # Create individual comparison plots
     for test_name, title in test_categories:

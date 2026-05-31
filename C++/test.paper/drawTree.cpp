@@ -15,14 +15,14 @@
 
 #include "../src.generate.drawings/IndexedPPS23RBBinaryTreeNode.h"
 #include "../src.generate.drawings/IndexedPPS23RedBlackBinaryTree.h"
-#include "../src.generate.drawings/EfficientLinearList.h"
+#include "../src.generate.drawings/EfficientList.h"
 
 using namespace std;
 int *values;
 int *indexes;
 int *deleteIndexes;
 
-void insertToEfficientLinearList(EfficientLinearList<int> *ell, int size)
+void insertToEfficientList(EfficientList<int> *ell, int size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -36,7 +36,7 @@ void insertToEfficientLinearList(EfficientLinearList<int> *ell, int size)
     }
 }
 
-void removeFromEfficientLinearList(EfficientLinearList<int> *ell, int deleteIndexesSize)
+void removeFromEfficientList(EfficientList<int> *ell, int deleteIndexesSize)
 {
     for (int i = 0; i < deleteIndexesSize; i++)
     {
@@ -64,7 +64,7 @@ int main()
         indexes[i] = i;
     }
 
-    EfficientLinearList<int> *ell;
+    EfficientList<int> *ell;
 
     cout << "The test has started now with " << size << " insertions and " << size / 2 << " deletions:" << endl;
     for (input = 4; input < 6; input++)
@@ -73,56 +73,56 @@ int main()
         {
         case 0: // insert tests
             cout << endl
-                 << "1: test efficient linear list push_back insert" << endl;
-            ell = new EfficientLinearList<int>;
-            insertToEfficientLinearList(ell, size);
+                 << "1: test efficient list push_back insert" << endl;
+            ell = new EfficientList<int>;
+            insertToEfficientList(ell, size);
             break;
         case 1: // remove tests
             cout << endl
-                 << "2: test efficient linear list pop_back" << endl;
+                 << "2: test efficient list pop_back" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = size - (i + 1);
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             break;
         case 2: // insert tests
             cout << endl
-                 << "3: test efficient linear list push_front" << endl;
-            ell = new EfficientLinearList<int>;
+                 << "3: test efficient list push_front" << endl;
+            ell = new EfficientList<int>;
             for (int i = 0; i < size; i++)
             {
                 indexes[i] = 0;
             }
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             break;
         case 3: // remove tests
             cout << endl
-                 << "4: test efficient linear list pop_front" << endl;
+                 << "4: test efficient list pop_front" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = 0;
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             break;
         case 4: // insert tests
             cout << endl
-                 << "5: test efficient linear list random indices insert" << endl;
-            ell = new EfficientLinearList<int>;
+                 << "5: test efficient list random indices insert" << endl;
+            ell = new EfficientList<int>;
             for (int i = 0; i < size; i++)
             {
                 indexes[i] = rand() % (i + 1);
             }
-            insertToEfficientLinearList(ell, size);
+            insertToEfficientList(ell, size);
             break;
         case 5: // remove tests
             cout << endl
-                 << "6: test efficient linear list random indices remove" << endl;
+                 << "6: test efficient list random indices remove" << endl;
             for (int i = 0; i < size / 2; i++)
             {
                 deleteIndexes[i] = rand() % (size - (i + 1));
             }
-            removeFromEfficientLinearList(ell, size / 2);
+            removeFromEfficientList(ell, size / 2);
             break;
         }
     }

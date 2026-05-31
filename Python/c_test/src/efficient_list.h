@@ -6,14 +6,14 @@ extern "C"
 #endif
 #include "indexed_PPS23RB_binaryTree.h"
 
-    typedef struct EfficientLinearList
+    typedef struct EfficientList
     {
         IPPRBBT *mIPPS23RBbt;
-    } EfficientLinearList;
+    } EfficientList;
 
-    EfficientLinearList *efficient_list_new(void)
+    EfficientList *efficient_list_new(void)
     {
-        EfficientLinearList *el = (EfficientLinearList *)malloc(sizeof(EfficientLinearList));
+        EfficientList *el = (EfficientList *)malloc(sizeof(EfficientList));
         if (!el)
         {
             return nullptr;
@@ -28,7 +28,7 @@ extern "C"
         return el;
     }
 
-    void efficient_list_free(EfficientLinearList *el)
+    void efficient_list_free(EfficientList *el)
     {
         ipps23rbbt_free(el->mIPPS23RBbt);
         free(el);
@@ -60,7 +60,7 @@ extern "C"
         return node;
     }
 
-    void efficient_list_insert(EfficientLinearList *el, int idx, int data)
+    void efficient_list_insert(EfficientList *el, int idx, int data)
     {
         IPPRBBT *mIPPS23RBbt = el->mIPPS23RBbt;
         if (idx < 0 || idx > mIPPS23RBbt->mSize)
@@ -102,7 +102,7 @@ extern "C"
         }
     }
 
-    void efficient_list_remove(EfficientLinearList *el, int idx)
+    void efficient_list_remove(EfficientList *el, int idx)
     {
         IPPRBBT *mIPPS23RBbt = el->mIPPS23RBbt;
         if (idx < 0 || idx >= mIPPS23RBbt->mSize)
@@ -126,7 +126,7 @@ extern "C"
         ipps23rbbt_delete_node(mIPPS23RBbt, node);
     }
 
-    int efficient_list_get_item(EfficientLinearList *el, int idx)
+    int efficient_list_get_item(EfficientList *el, int idx)
     {
         IPPRBBT *mIPPS23RBbt = el->mIPPS23RBbt;
         if (idx < 0 || idx >= mIPPS23RBbt->mSize)
@@ -138,7 +138,7 @@ extern "C"
         return node->mData;
     }
 
-    int efficient_list_size(EfficientLinearList *el)
+    int efficient_list_size(EfficientList *el)
     {
         return el->mIPPS23RBbt->mSize;
     }

@@ -3,7 +3,7 @@
 
 #pragma once
 template <class T>
-class EfficientLinearList;
+class EfficientList;
 
 template <class T>
 class IndexedPPS23RedBlackBinaryTree;
@@ -32,7 +32,7 @@ private:
 	}
 
 	friend class IndexedPPS23RedBlackBinaryTree<T>;
-	friend class EfficientLinearList<T>;
+	friend class EfficientList<T>;
 
 	enum COLOR mColor;
 	T mData;

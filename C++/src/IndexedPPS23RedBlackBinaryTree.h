@@ -10,7 +10,7 @@ template <class T>
 class IndexedPPS23RedBlackBinaryTree
 {
 	typedef IndexedPPS23RBBinaryTreeNode<T> IPPS23RBBTN;
-	friend class EfficientLinearList<T>;
+	friend class EfficientList<T>;
 
 public:
 	IndexedPPS23RedBlackBinaryTree(void)

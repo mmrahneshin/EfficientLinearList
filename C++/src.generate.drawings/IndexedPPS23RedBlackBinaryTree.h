@@ -10,7 +10,7 @@ template <class T>
 class IndexedPPS23RedBlackBinaryTree
 {
 	typedef IndexedPPS23RBBinaryTreeNode<T> IPPS23RBBTN;
-	friend class EfficientLinearList<T>;
+	friend class EfficientList<T>;
 
 public:
 	IndexedPPS23RedBlackBinaryTree(void)
@@ -408,7 +408,7 @@ private:
 			return;
 		}
 		string out = drawTree(operation, selected, deficiencyParent, deficiencyDirection);
-		string fileName = "/home/sepehr/uni/DS/paper/EfficientLinearList/doc/" + insertOrRemove + to_string(seqNo++) + operation;
+		string fileName = "/home/sepehr/uni/DS/paper/EfficientList/doc/" + insertOrRemove + to_string(seqNo++) + operation;
 		fstream fout;
 		fout.open(fileName + ".dot", ios::out);
 		fout << out;

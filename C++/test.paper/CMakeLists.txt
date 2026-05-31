@@ -7,11 +7,11 @@
 # add_executable(testTemplate testTemplate.cpp)
 # target_link_libraries(testTemplate)
 
-add_executable(efficientLinearList_vs_vector_half_remove efficientLinearList_vs_vector_half_remove.cpp)
-target_link_libraries(efficientLinearList_vs_vector_half_remove)
+add_executable(efficientList_vs_vector_half_remove efficientList_vs_vector_half_remove.cpp)
+target_link_libraries(efficientList_vs_vector_half_remove)
 
-add_executable(efficientLinearList_vs_vector_remove_all efficientLinearList_vs_vector_remove_all.cpp)
-target_link_libraries(efficientLinearList_vs_vector_remove_all)
+add_executable(efficientList_vs_vector_remove_all efficientList_vs_vector_remove_all.cpp)
+target_link_libraries(efficientList_vs_vector_remove_all)
 
 # add_executable(drawTree drawTree.cpp)
 # target_link_libraries(drawTree)

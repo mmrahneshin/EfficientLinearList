@@ -10,14 +10,12 @@
 #include <list>
 #include <map>
 #include <fstream>
-#include <chrono>   // Add this for high precision timing
-#include <iomanip>  // Add this for setprecision
-#include <unistd.h> // sysconf, _SC_PAGE_SIZE
-#include <malloc.h> // malloc_trim
+#include <chrono>  // Add this for high precision timing
+#include <iomanip> // Add this for setprecision
 
 #include "../src/IndexedPPS23RBBinaryTreeNode.h"
 #include "../src/IndexedPPS23RedBlackBinaryTree.h"
-#include "../src/EfficientLinearList.h"
+#include "../src/EfficientList.h"
 
 using namespace std;
 using namespace std::chrono; // Add this
@@ -28,32 +26,10 @@ int *deleteIndexes;
 high_resolution_clock::time_point start_time, end_time; // Change these to chrono time points
 
 double timeTaken;
-double memoryUsed;
 
-void process_mem_usage(double &resident_set)
+void insertToEfficientList(EfficientList<int> *ell, int size,
+                                 map<int, double> *timeTaken_map = nullptr)
 {
-    resident_set = 0.0;
-
-    // the two fields we want
-    unsigned long vsize;
-    long rss;
-    {
-        std::string ignore;
-        std::ifstream ifs("/proc/self/stat", std::ios_base::in);
-        ifs >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> rss;
-    }
-
-    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
-    resident_set = rss * page_size_kb;
-}
-
-void insertToEfficientLinearList(EfficientLinearList<int> *ell, int size,
-                                 map<int, double> *timeTaken_map = nullptr,
-                                 map<int, double> *memoryUsed_map = nullptr)
-{
-    double rss;
-    process_mem_usage(rss);
-    double startMemory = rss;
     start_time = high_resolution_clock::now();
     for (int i = 0; i < size; i++)
     {
@@ -66,32 +42,17 @@ void insertToEfficientLinearList(EfficientLinearList<int> *ell, int size,
         // cout << "===============" << endl;
     }
     end_time = high_resolution_clock::now();
-
-    process_mem_usage(rss);
-    double endMemory = rss;
-    memoryUsed = endMemory - startMemory;
-
     auto duration = duration_cast<nanoseconds>(end_time - start_time);
     timeTaken = duration.count() / 1e9; // Convert nanoseconds to seconds with high precision
     if (timeTaken_map != nullptr)
     {
         timeTaken_map->insert({size, timeTaken});
     }
-    if (memoryUsed_map != nullptr)
-    {
-        memoryUsed_map->insert({size, memoryUsed});
-    }
-    // cout << "insert time taken efficient linear list: " << timeTaken << endl;
+    // cout << "insert time taken efficient list: " << timeTaken << endl;
 }
 
-void insertToVector(vector<int> *vec, int size,
-                    map<int, double> *timeTaken_map = nullptr,
-                    map<int, double> *memoryUsed_map = nullptr)
+void insertToVector(vector<int> *vec, int size, map<int, double> *timeTaken_map = nullptr)
 {
-    double rss;
-    process_mem_usage(rss);
-    double startMemory = rss;
-
     start_time = high_resolution_clock::now();
     int i;
     for (i = 0; i < size; i++)
@@ -100,20 +61,12 @@ void insertToVector(vector<int> *vec, int size,
     }
     end_time = high_resolution_clock::now();
 
-    process_mem_usage(rss);
-    double endMemory = rss;
-    memoryUsed = endMemory - startMemory;
-
     auto duration = duration_cast<nanoseconds>(end_time - start_time);
     timeTaken = duration.count() / 1e9; // Convert nanoseconds to seconds with high precision
 
     if (timeTaken_map != nullptr)
     {
         timeTaken_map->insert({size, timeTaken});
-    }
-    if (memoryUsed_map != nullptr)
-    {
-        memoryUsed_map->insert({size, memoryUsed});
     }
     // cout << "insert time taken vector: " << timeTaken << endl;
 }
@@ -142,12 +95,12 @@ void insertToVector(vector<int> *vec, int size,
 //     cout << "insert time taken list (push_back): " << timeTaken << endl;
 // }
 
-bool valueCheck(EfficientLinearList<int> *ell, vector<int> *vec, int size,
+bool valueCheck(EfficientList<int> *ell, vector<int> *vec, int size,
                 map<int, double> *ell_timeTaken_map = nullptr, map<int, double> *vec_timeTaken_map = nullptr)
 {
 
     bool result = true;
-    // cout << "\n**efficient linear list :\nYours\tCorrect" << endl;
+    // cout << "\n**efficient list :\nYours\tCorrect" << endl;
     double ellTimeTaken = 0;
     double vectorTimeTaken = 0;
     int ellValue, vectorValue;
@@ -194,7 +147,7 @@ bool valueCheck(EfficientLinearList<int> *ell, vector<int> *vec, int size,
     return result;
 }
 
-// bool valueCheck(EfficientLinearList<int> *ell, list<int> *lst, int size)
+// bool valueCheck(EfficientList<int> *ell, list<int> *lst, int size)
 // {
 //     bool result = true;
 //     double ellTimeTaken = 0;
@@ -228,13 +181,9 @@ bool valueCheck(EfficientLinearList<int> *ell, vector<int> *vec, int size,
 //     return result;
 // }
 
-void removeFromEfficientLinearList(EfficientLinearList<int> *ell, int deleteIndexesSize,
-                                   map<int, double> *timeTaken_map = nullptr,
-                                   map<int, double> *memoryUsed_map = nullptr)
+void removeFromEfficientList(EfficientList<int> *ell, int deleteIndexesSize,
+                                   map<int, double> *timeTaken_map = nullptr)
 {
-    double rss;
-    process_mem_usage(rss);
-    double startMemory = rss;
     start_time = high_resolution_clock::now();
     for (int i = 0; i < deleteIndexesSize; i++)
     {
@@ -247,11 +196,6 @@ void removeFromEfficientLinearList(EfficientLinearList<int> *ell, int deleteInde
         // cout << "===============" << endl;
     }
     end_time = high_resolution_clock::now();
-    malloc_trim(0);
-
-    process_mem_usage(rss);
-    double endMemory = rss;
-    memoryUsed = startMemory - endMemory;
 
     auto duration = duration_cast<nanoseconds>(end_time - start_time);
     timeTaken = duration.count() / 1e9;
@@ -259,21 +203,12 @@ void removeFromEfficientLinearList(EfficientLinearList<int> *ell, int deleteInde
     {
         timeTaken_map->insert({deleteIndexesSize, timeTaken});
     }
-    if (memoryUsed_map != nullptr)
-    {
-        memoryUsed_map->insert({deleteIndexesSize, memoryUsed});
-    }
-    // cout << "remove time taken efficient linear list: " << timeTaken << endl;
+    // cout << "remove time taken efficient list: " << timeTaken << endl;
 }
 
 void removeFromVector(vector<int> *vec, int deleteIndexesSize,
-                      map<int, double> *timeTaken_map = nullptr,
-                      map<int, double> *memoryUsed_map = nullptr)
+                      map<int, double> *timeTaken_map = nullptr)
 {
-    double rss;
-    process_mem_usage(rss);
-    double startMemory = rss;
-
     start_time = high_resolution_clock::now();
     int i;
     for (i = 0; i < deleteIndexesSize; i++)
@@ -281,22 +216,12 @@ void removeFromVector(vector<int> *vec, int deleteIndexesSize,
         vec->erase(vec->begin() + deleteIndexes[i]);
     }
     end_time = high_resolution_clock::now();
-    vec->shrink_to_fit();
-
-    malloc_trim(0);
-    process_mem_usage(rss);
-    double endMemory = rss;
-    memoryUsed = startMemory - endMemory;
 
     auto duration = duration_cast<nanoseconds>(end_time - start_time);
     timeTaken = duration.count() / 1e9;
     if (timeTaken_map != nullptr)
     {
         timeTaken_map->insert({deleteIndexesSize, timeTaken});
-    }
-    if (memoryUsed_map != nullptr)
-    {
-        memoryUsed_map->insert({deleteIndexesSize, memoryUsed});
     }
     // cout << "remove time taken vector: " << timeTaken << endl;
 }
@@ -327,39 +252,7 @@ void removeFromVector(vector<int> *vec, int deleteIndexesSize,
 
 int main()
 {
-    // memory consumption
-    map<int, double> *pushBack_ell_memoryResult = new map<int, double>();
-    map<int, double> *pushBack_vec_memoryResult = new map<int, double>();
-    map<int, double> *popBackAfterPushBack_ell_memoryResult = new map<int, double>();
-    map<int, double> *popBackAfterPushBack_vec_memoryResult = new map<int, double>();
-    map<int, double> *popFrontAfterPushBack_ell_memoryResult = new map<int, double>();
-    map<int, double> *popFrontAfterPushBack_vec_memoryResult = new map<int, double>();
-    map<int, double> *removeRandomIndicesAfterPushBack_ell_memoryResult = new map<int, double>();
-    map<int, double> *removeRandomIndicesAfterPushBack_vec_memoryResult = new map<int, double>();
-
-    map<int, double> *pushFront_ell_memoryResult = new map<int, double>();
-    map<int, double> *pushFront_vec_memoryResult = new map<int, double>();
-    map<int, double> *popFrontAfterPushFront_ell_memoryResult = new map<int, double>();
-    map<int, double> *popFrontAfterPushFront_vec_memoryResult = new map<int, double>();
-    map<int, double> *popBackAfterPushFront_ell_memoryResult = new map<int, double>();
-    map<int, double> *popBackAfterPushFront_vec_memoryResult = new map<int, double>();
-
-    map<int, double> *insertRandomIndices_ell_memoryResult = new map<int, double>();
-    map<int, double> *insertRandomIndices_vec_memoryResult = new map<int, double>();
-    map<int, double> *removeRandomIndices_ell_memoryResult = new map<int, double>();
-    map<int, double> *removeRandomIndices_vec_memoryResult = new map<int, double>();
-
-    map<int, double> *pushFront_pushBack_ell_memoryResult = new map<int, double>();
-    map<int, double> *pushFront_pushBack_vec_memoryResult = new map<int, double>();
-    map<int, double> *popFront_popBack_ell_memoryResult = new map<int, double>();
-    map<int, double> *popFront_popBack_vec_memoryResult = new map<int, double>();
-
-    map<int, double> *pushBack_pushFront_ell_memoryResult = new map<int, double>();
-    map<int, double> *pushBack_pushFront_vec_memoryResult = new map<int, double>();
-    map<int, double> *popBack_popFront_ell_memoryResult = new map<int, double>();
-    map<int, double> *popBack_popFront_vec_memoryResult = new map<int, double>();
-
-    // time taken results
+    // push_back
     map<int, double> *pushBack_ellResult = new map<int, double>();
     map<int, double> *get_after_pushBack_ellResult = new map<int, double>();
 
@@ -442,14 +335,14 @@ int main()
     map<int, double> *popBack_popFront_vecResult = new map<int, double>();
     map<int, double> *get_after_popBack_popFront_vecResult = new map<int, double>();
 
-    for (int step = 10000; step <= 100000; step *= 10)
+    for (int step = 1; step <= 1000000; step *= 10)
     {
-        for (int size = step; size < step * 10 && size <= 100000; size += step)
+        for (int size = step; size < step * 10 && size <= 2000000; size += step)
         {
             cout << size << endl;
             values = new int[size];
             indexes = new int[size];
-            deleteIndexes = new int[size / 2];
+            deleteIndexes = new int[size];
             for (int i = 0; i < size; i++)
             {
                 values[i] = i + 1;
@@ -457,7 +350,7 @@ int main()
             }
 
             bool result = true;
-            EfficientLinearList<int> *ell;
+            EfficientList<int> *ell;
             vector<int> *vec;
             // list<int> *lst;
 
@@ -471,13 +364,10 @@ int main()
                 {
                 case 0: // insert tests
                     // cout << endl
-                    //      << "1: test efficient linear list vs list push_back insert" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "1: test efficient list vs list push_back insert" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
-
-                    insertToEfficientLinearList(ell, size, pushBack_ellResult, pushBack_ell_memoryResult);
-                    // process_mem_usage(rss);
-                    // std::cout << " RSS(KB): " << rss << "\n";
+                    insertToEfficientList(ell, size, pushBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -486,19 +376,17 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    insertToVector(vec, size, pushBack_vecResult, pushBack_vec_memoryResult);
+                    insertToVector(vec, size, pushBack_vecResult);
                     result = valueCheck(ell, vec, size, get_after_pushBack_ellResult, get_after_pushBack_vecResult);
                     break;
                 case 1: // remove tests
                     // cout << endl
-                    //      << "2: test efficient linear list vs list pop_back" << endl;
-                    for (int i = 0; i < size / 2; i++)
+                    //      << "2: test efficient list vs list pop_back" << endl;
+                    for (int i = 0; i < size; i++)
                     {
                         deleteIndexes[i] = size - (i + 1);
                     }
-
-                    removeFromEfficientLinearList(ell, size / 2, popBackAfterPushBack_ellResult, popBackAfterPushBack_ell_memoryResult);
-
+                    removeFromEfficientList(ell, size, popBackAfterPushBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -507,20 +395,15 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-
-                    removeFromVector(vec, size / 2, popBackAfterPushBack_vecResult, popBackAfterPushBack_vec_memoryResult);
-
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_popBackAfterPushBack_ellResult,
-                                        get_after_popBackAfterPushBack_vecResult);
-
+                    removeFromVector(vec, size, popBackAfterPushBack_vecResult);
+                    result = ell->size() == vec->size();
                     break;
                 case 2: // insert tests
                     // cout << endl
-                    //      << "3: test efficient linear list vs vector push_back insert" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "3: test efficient list vs vector push_back insert" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
-                    insertToEfficientLinearList(ell, size);
+                    insertToEfficientList(ell, size);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -534,13 +417,12 @@ int main()
                     break;
                 case 3: // remove tests
                     // cout << endl
-                    //      << "4: test efficient linear list vs vector pop_front" << endl;
-                    for (int i = 0; i < size / 2; i++)
+                    //      << "4: test efficient list vs vector pop_front" << endl;
+                    for (int i = 0; i < size; i++)
                     {
                         deleteIndexes[i] = 0;
                     }
-                    removeFromEfficientLinearList(ell, size / 2,
-                                                  popFrontAfterPushBack_ellResult, popFrontAfterPushBack_ell_memoryResult);
+                    removeFromEfficientList(ell, size, popFrontAfterPushBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -549,23 +431,21 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, popFrontAfterPushBack_vecResult, popFrontAfterPushBack_vec_memoryResult);
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_popFrontAfterPushBack_ellResult,
-                                        get_after_popFrontAfterPushBack_vecResult);
+                    removeFromVector(vec, size, popFrontAfterPushBack_vecResult);
+                    result = ell->size() == vec->size();
 
                     break;
                 case 4: // insert tests
                     // cout << endl
-                    //      << "5: test efficient linear list vs list push_front" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "5: test efficient list vs list push_front" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
 
                     for (int i = 0; i < size; i++)
                     {
                         indexes[i] = 0;
                     }
-                    insertToEfficientLinearList(ell, size, pushFront_ellResult, pushFront_ell_memoryResult);
+                    insertToEfficientList(ell, size, pushFront_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -574,13 +454,13 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    insertToVector(vec, size, pushFront_vecResult, pushFront_vec_memoryResult);
+                    insertToVector(vec, size, pushFront_vecResult);
                     result = valueCheck(ell, vec, size, get_after_pushFront_ellResult, get_after_pushFront_vecResult);
                     break;
                 case 5: // remove tests
                     // cout << endl
-                    //      << "6: test efficient linear list vs list pop_front" << endl;
-                    removeFromEfficientLinearList(ell, size / 2, popFrontAfterPushFront_ellResult, popFrontAfterPushFront_ell_memoryResult);
+                    //      << "6: test efficient list vs list pop_front" << endl;
+                    removeFromEfficientList(ell, size, popFrontAfterPushFront_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -589,18 +469,16 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, popFrontAfterPushFront_vecResult, popFrontAfterPushFront_vec_memoryResult);
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_popFrontAfterPushFront_ellResult,
-                                        get_after_popFrontAfterPushFront_vecResult);
+                    removeFromVector(vec, size, popFrontAfterPushFront_vecResult);
+                    result = ell->size() == vec->size();
                     break;
                 case 6: // insert tests
                     // cout << endl
-                    //      << "7: test efficient linear list vs list push_front" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "7: test efficient list vs list push_front" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
 
-                    insertToEfficientLinearList(ell, size);
+                    insertToEfficientList(ell, size);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -614,12 +492,12 @@ int main()
                     break;
                 case 7: // remove tests
                     // cout << endl
-                    //      << "8: test efficient linear list vs list begin pop_back" << endl;
-                    for (int i = 0; i < size / 2; i++)
+                    //      << "8: test efficient list vs list begin pop_back" << endl;
+                    for (int i = 0; i < size; i++)
                     {
                         deleteIndexes[i] = size - (i + 1);
                     }
-                    removeFromEfficientLinearList(ell, size / 2, popBackAfterPushFront_ellResult, popBackAfterPushFront_ell_memoryResult);
+                    removeFromEfficientList(ell, size, popBackAfterPushFront_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -628,21 +506,19 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, popBackAfterPushFront_vecResult, popBackAfterPushFront_vec_memoryResult);
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_popBackAfterPushFront_ellResult,
-                                        get_after_popBackAfterPushFront_vecResult);
+                    removeFromVector(vec, size, popBackAfterPushFront_vecResult);
+                    result = ell->size() == vec->size();
                     break;
                 case 8: // insert tests
                     // cout << endl
-                    //      << "9: test efficient linear list vs vector push_back" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "9: test efficient list vs vector push_back" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
                     for (int i = 0; i < size; i++)
                     {
                         indexes[i] = i;
                     }
-                    insertToEfficientLinearList(ell, size);
+                    insertToEfficientList(ell, size);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -656,13 +532,12 @@ int main()
                     break;
                 case 9: // remove tests
                     // cout << endl
-                    //      << "10: test efficient linear list vs vector random indices remove" << endl;
-                    for (int i = 0; i < size / 2; i++)
+                    //      << "10: test efficient list vs vector random indices remove" << endl;
+                    for (int i = 0; i < size; i++)
                     {
-                        deleteIndexes[i] = rand() % (size - (i + 1));
+                        deleteIndexes[i] = rand() % (size - i);
                     }
-                    removeFromEfficientLinearList(ell, size / 2, removeRandomIndicesAfterPushBack_ellResult,
-                                                  removeRandomIndicesAfterPushBack_ell_memoryResult);
+                    removeFromEfficientList(ell, size, removeRandomIndicesAfterPushBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -671,22 +546,19 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, removeRandomIndicesAfterPushBack_vecResult,
-                                     removeRandomIndicesAfterPushBack_vec_memoryResult);
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_removeRandomIndicesAfterPushBack_ellResult,
-                                        get_after_removeRandomIndicesAfterPushBack_vecResult);
+                    removeFromVector(vec, size, removeRandomIndicesAfterPushBack_vecResult);
+                    result = ell->size() == vec->size();
                     break;
                 case 10: // insert tests
                     // cout << endl
-                    //      << "11: test efficient linear list vs vector random indices insert" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "11: test efficient list vs vector random indices insert" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
                     for (int i = 0; i < size; i++)
                     {
                         indexes[i] = rand() % (i + 1);
                     }
-                    insertToEfficientLinearList(ell, size, insertRandomIndices_ellResult, insertRandomIndices_ell_memoryResult);
+                    insertToEfficientList(ell, size, insertRandomIndices_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -695,18 +567,18 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    insertToVector(vec, size, insertRandomIndices_vecResult, insertRandomIndices_vec_memoryResult);
+                    insertToVector(vec, size, insertRandomIndices_vecResult);
                     result = valueCheck(ell, vec, size,
                                         get_after_insertRandomIndices_ellResult, get_after_insertRandomIndices_vecResult);
                     break;
                 case 11: // remove tests
                     // cout << endl
-                    //      << "12: test efficient linear list vs vector random indices remove" << endl;
-                    for (int i = 0; i < size / 2; i++)
+                    //      << "12: test efficient list vs vector random indices remove" << endl;
+                    for (int i = 0; i < size; i++)
                     {
-                        deleteIndexes[i] = rand() % (size - (i + 1));
+                        deleteIndexes[i] = rand() % (size - i);
                     }
-                    removeFromEfficientLinearList(ell, size / 2, removeRandomIndices_ellResult, removeRandomIndices_ell_memoryResult);
+                    removeFromEfficientList(ell, size, removeRandomIndices_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -715,15 +587,14 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, removeRandomIndices_vecResult, removeRandomIndices_vec_memoryResult);
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_removeRandomIndices_ellResult, get_after_removeRandomIndices_vecResult);
+                    removeFromVector(vec, size, removeRandomIndices_vecResult);
+                    result = ell->size() == vec->size();
                     break;
 
                 case 12: // insert tests
                     // cout << endl
-                    //      << "13: test efficient linear list vs list half push_front then push_back the other half" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "13: test efficient list vs list half push_front then push_back the other half" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
 
                     for (int i = 0; i < size / 2; i++)
@@ -732,7 +603,7 @@ int main()
                         indexes[i + size / 2] = i + size / 2;
                     }
 
-                    insertToEfficientLinearList(ell, size, pushFront_pushBack_ellResult, pushFront_pushBack_ell_memoryResult);
+                    insertToEfficientList(ell, size, pushFront_pushBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -741,7 +612,7 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    insertToVector(vec, size, pushFront_pushBack_vecResult, pushFront_pushBack_vec_memoryResult);
+                    insertToVector(vec, size, pushFront_pushBack_vecResult);
 
                     result = valueCheck(ell, vec, size,
                                         get_after_pushFront_pushBack_ellResult,
@@ -749,13 +620,13 @@ int main()
                     break;
                 case 13: // remove tests
                     // cout << endl
-                    //      << "14: test efficient linear list vs list begin half pop_front then pop_back the other half" << endl;
-                    for (int i = 0; i < size / 4; i++)
+                    //      << "14: test efficient list vs list begin half pop_front then pop_back the other half" << endl;
+                    for (int i = 0; i < size / 2; i++)
                     {
                         deleteIndexes[i] = 0;
-                        deleteIndexes[i + size / 4] = size - (i + size / 4 + 1);
+                        deleteIndexes[i + size / 2] = size - (i + size / 2 + 1);
                     }
-                    removeFromEfficientLinearList(ell, size / 2, popFront_popBack_ellResult, popFront_popBack_ell_memoryResult);
+                    removeFromEfficientList(ell, size, popFront_popBack_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -764,16 +635,13 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, popFront_popBack_vecResult, popFront_popBack_vec_memoryResult);
-
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_popFront_popBack_ellResult,
-                                        get_after_popFront_popBack_vecResult);
+                    removeFromVector(vec, size, popFront_popBack_vecResult);
+                    result = ell->size() == vec->size();
                     break;
                 case 14: // insert tests
                     // cout << endl
-                    //      << "15: test efficient linear list vs list half push_back then push_front the other half" << endl;
-                    ell = new EfficientLinearList<int>;
+                    //      << "15: test efficient list vs list half push_back then push_front the other half" << endl;
+                    ell = new EfficientList<int>;
                     vec = new vector<int>();
 
                     for (int i = 0; i < size / 2; i++)
@@ -782,7 +650,7 @@ int main()
                         indexes[i + size / 2] = 0;
                     }
 
-                    insertToEfficientLinearList(ell, size, pushBack_pushFront_ellResult, pushBack_pushFront_ell_memoryResult);
+                    insertToEfficientList(ell, size, pushBack_pushFront_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -791,7 +659,7 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    insertToVector(vec, size, pushBack_pushFront_vecResult, pushBack_pushFront_vec_memoryResult);
+                    insertToVector(vec, size, pushBack_pushFront_vecResult);
 
                     result = valueCheck(ell, vec, size,
                                         get_after_pushBack_pushFront_ellResult,
@@ -799,13 +667,13 @@ int main()
                     break;
                 case 15: // remove tests
                     // cout << endl
-                    //      << "16: test efficient linear list vs list begin half pop_back then pop_front the other half" << endl;
-                    for (int i = 0; i < size / 4; i++)
+                    //      << "16: test efficient list vs list begin half pop_back then pop_front the other half" << endl;
+                    for (int i = 0; i < size / 2; i++)
                     {
                         deleteIndexes[i] = size - (i + 1);
-                        deleteIndexes[i + size / 4] = 0;
+                        deleteIndexes[i + size / 2] = 0;
                     }
-                    removeFromEfficientLinearList(ell, size / 2, popBack_popFront_ellResult, popBack_popFront_ell_memoryResult);
+                    removeFromEfficientList(ell, size, popBack_popFront_ellResult);
                     // cout << "a1LeftInsertion: " << ell->mIPPS23RBbt->a1LeftInsertion << endl;
                     // cout << "a1RightInsertion: " << ell->mIPPS23RBbt->a1RightInsertion << endl;
                     // cout << "a2LeftInsertion: " << ell->mIPPS23RBbt->a2LeftInsertion << endl;
@@ -814,11 +682,8 @@ int main()
                     // cout << "b1RightInsertion: " << ell->mIPPS23RBbt->b1RightInsertion << endl;
                     // cout << "b2LeftInsertion: " << ell->mIPPS23RBbt->b2LeftInsertion << endl;
                     // cout << "b2RightInsertion: " << ell->mIPPS23RBbt->b2RightInsertion << endl;
-                    removeFromVector(vec, size / 2, popBack_popFront_vecResult, popBack_popFront_vec_memoryResult);
-
-                    result = valueCheck(ell, vec, size / 2,
-                                        get_after_popBack_popFront_ellResult,
-                                        get_after_popBack_popFront_vecResult);
+                    removeFromVector(vec, size, popBack_popFront_vecResult);
+                    result = ell->size() == vec->size();
                     break;
                 }
 
@@ -846,29 +711,7 @@ int main()
 
     auto saveMapToCSV = [](const map<int, double> *data, const string &filename)
     {
-        string fullPath = "/workspaces/EfficientLinearList/timeTakenResults/half_remove/" + filename;
-        ofstream file(fullPath);
-        if (file.is_open())
-        {
-            file << "Size,Time\n";
-            file << fixed << setprecision(9); // Set precision to 9 decimal places
-            for (const auto &pair : *data)
-            {
-                file << pair.first << "," << pair.second << "\n";
-            }
-            file.close();
-            cout << "Saved " << fullPath << endl;
-        }
-        else
-        {
-            cout << "Error: Could not create " << fullPath << endl;
-            cout << "Make sure the results directory exists" << endl;
-        }
-    };
-
-    auto saveMemoryMapToCSV = [](const map<int, double> *data, const string &filename)
-    {
-        string fullPath = "/workspaces/EfficientLinearList/memoryResults/half_remove/" + filename;
+        string fullPath = "/workspaces/EfficientList/timeTakenResults/remove_all/" + filename;
         ofstream file(fullPath);
         if (file.is_open())
         {
@@ -966,71 +809,8 @@ int main()
 
     saveMapToCSV(popBack_popFront_vecResult, "popBack_popFront_vec_results.csv");
     saveMapToCSV(get_after_popBack_popFront_vecResult, "get_after_popBack_popFront_vec_results.csv");
-    // Save all memory results
-    saveMemoryMapToCSV(pushBack_ell_memoryResult, "pushBack_ell_memory_results.csv");
-    saveMemoryMapToCSV(pushBack_vec_memoryResult, "pushBack_vec_memory_results.csv");
-    saveMemoryMapToCSV(popBackAfterPushBack_ell_memoryResult, "popBackAfterPushBack_ell_memory_results.csv");
-    saveMemoryMapToCSV(popBackAfterPushBack_vec_memoryResult, "popBackAfterPushBack_vec_memory_results.csv");
-    saveMemoryMapToCSV(popFrontAfterPushBack_ell_memoryResult, "popFrontAfterPushBack_ell_memory_results.csv");
-    saveMemoryMapToCSV(popFrontAfterPushBack_vec_memoryResult, "popFrontAfterPushBack_vec_memory_results.csv");
-    saveMemoryMapToCSV(removeRandomIndicesAfterPushBack_ell_memoryResult, "removeRandomIndicesAfterPushBack_ell_memory_results.csv");
-    saveMemoryMapToCSV(removeRandomIndicesAfterPushBack_vec_memoryResult, "removeRandomIndicesAfterPushBack_vec_memory_results.csv");
 
-    saveMemoryMapToCSV(pushFront_ell_memoryResult, "pushFront_ell_memory_results.csv");
-    saveMemoryMapToCSV(pushFront_vec_memoryResult, "pushFront_vec_memory_results.csv");
-    saveMemoryMapToCSV(popFrontAfterPushFront_ell_memoryResult, "popFrontAfterPushFront_ell_memory_results.csv");
-    saveMemoryMapToCSV(popFrontAfterPushFront_vec_memoryResult, "popFrontAfterPushFront_vec_memory_results.csv");
-    saveMemoryMapToCSV(popBackAfterPushFront_ell_memoryResult, "popBackAfterPushFront_ell_memory_results.csv");
-    saveMemoryMapToCSV(popBackAfterPushFront_vec_memoryResult, "popBackAfterPushFront_vec_memory_results.csv");
-
-    saveMemoryMapToCSV(insertRandomIndices_ell_memoryResult, "insertRandomIndices_ell_memory_results.csv");
-    saveMemoryMapToCSV(insertRandomIndices_vec_memoryResult, "insertRandomIndices_vec_memory_results.csv");
-    saveMemoryMapToCSV(removeRandomIndices_ell_memoryResult, "removeRandomIndices_ell_memory_results.csv");
-    saveMemoryMapToCSV(removeRandomIndices_vec_memoryResult, "removeRandomIndices_vec_memory_results.csv");
-
-    saveMemoryMapToCSV(pushFront_pushBack_ell_memoryResult, "pushFront_pushBack_ell_memory_results.csv");
-    saveMemoryMapToCSV(pushFront_pushBack_vec_memoryResult, "pushFront_pushBack_vec_memory_results.csv");
-    saveMemoryMapToCSV(popFront_popBack_ell_memoryResult, "popFront_popBack_ell_memory_results.csv");
-    saveMemoryMapToCSV(popFront_popBack_vec_memoryResult, "popFront_popBack_vec_memory_results.csv");
-
-    saveMemoryMapToCSV(pushBack_pushFront_ell_memoryResult, "pushBack_pushFront_ell_memory_results.csv");
-    saveMemoryMapToCSV(pushBack_pushFront_vec_memoryResult, "pushBack_pushFront_vec_memory_results.csv");
-    saveMemoryMapToCSV(popBack_popFront_ell_memoryResult, "popBack_popFront_ell_memory_results.csv");
-    saveMemoryMapToCSV(popBack_popFront_vec_memoryResult, "popBack_popFront_vec_memory_results.csv");
-
-    // Clean up memory maps
-    delete pushBack_ell_memoryResult;
-    delete pushBack_vec_memoryResult;
-    delete popBackAfterPushBack_ell_memoryResult;
-    delete popBackAfterPushBack_vec_memoryResult;
-    delete popFrontAfterPushBack_ell_memoryResult;
-    delete popFrontAfterPushBack_vec_memoryResult;
-    delete removeRandomIndicesAfterPushBack_ell_memoryResult;
-    delete removeRandomIndicesAfterPushBack_vec_memoryResult;
-
-    delete pushFront_ell_memoryResult;
-    delete pushFront_vec_memoryResult;
-    delete popFrontAfterPushFront_ell_memoryResult;
-    delete popFrontAfterPushFront_vec_memoryResult;
-    delete popBackAfterPushFront_ell_memoryResult;
-    delete popBackAfterPushFront_vec_memoryResult;
-
-    delete insertRandomIndices_ell_memoryResult;
-    delete insertRandomIndices_vec_memoryResult;
-    delete removeRandomIndices_ell_memoryResult;
-    delete removeRandomIndices_vec_memoryResult;
-
-    delete pushFront_pushBack_ell_memoryResult;
-    delete pushFront_pushBack_vec_memoryResult;
-    delete popFront_popBack_ell_memoryResult;
-    delete popFront_popBack_vec_memoryResult;
-
-    delete pushBack_pushFront_ell_memoryResult;
-    delete pushBack_pushFront_vec_memoryResult;
-    delete popBack_popFront_ell_memoryResult;
-    delete popBack_popFront_vec_memoryResult;
-
-    // Clean up time taken maps
+    // Clean up memory
     delete pushBack_ellResult;
     delete get_after_pushBack_ellResult;
 

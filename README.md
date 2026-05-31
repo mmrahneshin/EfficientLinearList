@@ -2,9 +2,9 @@
 
 [![DOI](https://zenodo.org/badge/961046497.svg)](https://doi.org/10.5281/zenodo.20474959)
 
-This repository contains the source code for the "Efficient Linear List" data structure as detailed in our paper. 
+This repository contains the source code for the "Efficient List" data structure as detailed in our paper. 
 
-Traditionally, arrays provide $O(1)$ random access but perform poorly ($O(n)$) on arbitrary insertions and deletions. Linked lists, on the other hand, support $O(1)$ insertion and deletion but incur $O(n)$ random-access time. The **Efficient Linear List** uses a practical implementation of the Order-Statistic Tree (OST) backed by Parity-Seeking 2-3 Red-Black Trees (PSRBT) to address this trade-off.
+Traditionally, arrays provide $O(1)$ random access but perform poorly ($O(n)$) on arbitrary insertions and deletions. Linked lists, on the other hand, support $O(1)$ insertion and deletion but incur $O(n)$ random-access time. The **Efficient List** uses a practical implementation of the Order-Statistic Tree (OST) backed by Parity-Seeking 2-3 Red-Black Trees (PSRBT) to address this trade-off.
 
 The data structure provides:
 - Amortized $O(1)$ time for push and pop operations at both ends of the list.
@@ -12,9 +12,9 @@ The data structure provides:
 
 ## Repository Structure
 
-The repository includes implementations of the Efficient Linear List in three major programming languages:
+The repository includes implementations of the Efficient List in three major programming languages:
 
-*   **`C++/`**: A high-performance implementation in C++. Also features time metric test suites comparing `EfficientLinearList` against `std::vector`, along with benchmark plotting scripts.
+*   **`C++/`**: A high-performance implementation in C++. Also features time metric test suites comparing `EfficientList` against `std::vector`, along with benchmark plotting scripts.
 *   **`Java/`**: A Java implementation of the Parity-Seeking Red-Black Tree and the Efficient List, accompanied by its own test suite and plotting scripts.
 *   **`Python/`**: A C-extension based module (`efficient_list`) exposing the data structure directly to Python, bridging fast low-level execution with a familiar API.
 
@@ -48,8 +48,8 @@ Once built, the executables will be available in the `build/` directory (categor
 
 ```bash
 # Run one of the compiled benchmark/test binaries
-./test.paper/efficientLinearList_vs_vector_half_remove
-./test.paper/efficientLinearList_vs_vector_remove_all
+./test.paper/efficientList_vs_vector_half_remove
+./test.paper/efficientList_vs_vector_remove_all
 ```
 
 You can also use the included Python scripts in the `C++/` directory (e.g., `plot_time_ell_vs_vec.py`) to visualize the benchmark results after they are generated.

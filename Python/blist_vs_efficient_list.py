@@ -12,7 +12,7 @@ delete_indexes = []
 
 def insert_to_efficient_linear_list(ell, size):
     """
-    Simulate insertion into EfficientLinearList (using Python list as a substitute).
+    Simulate insertion into EfficientList (using Python list as a substitute).
     In a real implementation, this would use a Red-Black Tree-based structure.
     """
     start = time.time()
@@ -21,7 +21,7 @@ def insert_to_efficient_linear_list(ell, size):
         ell.insert(indexes[i], values[i])
     end_time = time.time()
     time_taken = end_time - start
-    print(f"insert time taken efficient linear list: {time_taken:.6f}")
+    print(f"insert time taken efficient list: {time_taken:.6f}")
 
 
 def insert_to_list(lst, size):
@@ -55,7 +55,7 @@ def push_back_to_list(lst, start_idx, size):
 
 
 def value_check_ell_list(ell, lst, size):
-    """Compare values between EfficientLinearList (list) and list."""
+    """Compare values between EfficientList (list) and list."""
     result = True
     ell_time_taken = 0.0
     list_time_taken = 0.0
@@ -81,13 +81,13 @@ def value_check_ell_list(ell, lst, size):
 
 
 def remove_from_efficient_linear_list(ell, delete_indexes_size):
-    """Simulate removal from EfficientLinearList (using Python list)."""
+    """Simulate removal from EfficientList (using Python list)."""
     start = time.time()
     for i in range(delete_indexes_size):
         ell.remove(delete_indexes[i])
     end_time = time.time()
     time_taken = end_time - start
-    print(f"remove time taken efficient linear list: {time_taken:.6f}")
+    print(f"remove time taken efficient list: {time_taken:.6f}")
 
 
 def remove_from_list(lst, delete_indexes_size):
@@ -132,14 +132,14 @@ def main():
 
     for input_test in range(0, 16):
         if input_test == 0:
-            print("\n1: test efficient linear list vs list push_back insert")
+            print("\n1: test efficient list vs list push_back insert")
             ell = EfficientList()
             lst = blist()
             insert_to_efficient_linear_list(ell, size)
             push_back_to_list(lst, 0, size)
             result = value_check_ell_list(ell, lst, size)
         elif input_test == 1:
-            print("\n2: test efficient linear list vs list pop_back")
+            print("\n2: test efficient list vs list pop_back")
             for i in range(size // 2):
                 delete_indexes[i] = size - (i + 1)
             remove_from_efficient_linear_list(ell, size // 2)
@@ -147,7 +147,7 @@ def main():
             result = value_check_ell_list(ell, lst, len(lst))
 
         elif input_test == 2:
-            print("\n3: test efficient linear list vs list push_back insert")
+            print("\n3: test efficient list vs list push_back insert")
             ell = EfficientList()
             lst = blist()
             insert_to_efficient_linear_list(ell, size)
@@ -155,7 +155,7 @@ def main():
             result = value_check_ell_list(ell, lst, size)
 
         elif input_test == 3:
-            print("\n4: test efficient linear list vs list pop_front")
+            print("\n4: test efficient list vs list pop_front")
             for i in range(size // 2):
                 delete_indexes[i] = 0
             remove_from_efficient_linear_list(ell, size // 2)
@@ -163,7 +163,7 @@ def main():
             result = value_check_ell_list(ell, lst, len(lst))
 
         elif input_test == 4:
-            print("\n5: test efficient linear list vs list push_front")
+            print("\n5: test efficient list vs list push_front")
             ell = EfficientList()
             lst = blist()
             for i in range(size):
@@ -173,13 +173,13 @@ def main():
             result = value_check_ell_list(ell, lst, size)
 
         elif input_test == 5:
-            print("\n6: test efficient linear list vs list begin pop_front")
+            print("\n6: test efficient list vs list begin pop_front")
             remove_from_efficient_linear_list(ell, size // 2)
             pop_front_from_list(lst, 0, size // 2)
             result = value_check_ell_list(ell, lst, len(lst))
 
         elif input_test == 6:
-            print("\n7: test efficient linear list vs list push_front")
+            print("\n7: test efficient list vs list push_front")
             ell = EfficientList()
             lst = blist()
             insert_to_efficient_linear_list(ell, size)
@@ -187,7 +187,7 @@ def main():
             result = value_check_ell_list(ell, lst, size)
 
         elif input_test == 7:
-            print("\n8: test efficient linear list vs list begin pop_back")
+            print("\n8: test efficient list vs list begin pop_back")
             for i in range(size // 2):
                 delete_indexes[i] = size - (i + 1)
             remove_from_efficient_linear_list(ell, size // 2)
@@ -195,7 +195,7 @@ def main():
             result = value_check_ell_list(ell, lst, len(lst))
 
         elif input_test == 8:
-            print("\n9: test efficient linear list vs list push_back")
+            print("\n9: test efficient list vs list push_back")
             ell = EfficientList()
             lst = blist()
             for i in range(size):
@@ -205,7 +205,7 @@ def main():
             result = value_check_ell_list(ell, lst, size)
 
         elif input_test == 9:
-            print("\n10: test efficient linear list vs list random indices remove")
+            print("\n10: test efficient list vs list random indices remove")
             for i in range(size // 2):
                 delete_indexes[i] = random.randint(0, size - (i + 1))
             remove_from_efficient_linear_list(ell, size // 2)
@@ -213,7 +213,7 @@ def main():
             result = value_check_ell_list(ell, lst, len(lst))
 
         elif input_test == 10:
-            print("\n11: test efficient linear list vs list random indices insert")
+            print("\n11: test efficient list vs list random indices insert")
             for i in range(size // 2):
                 indexes[i] = random.randint(0, i)
             insert_to_efficient_linear_list(ell, size // 2)
@@ -221,7 +221,7 @@ def main():
             result = value_check_ell_list(ell, lst, size)
 
         elif input_test == 11:
-            print("\n12: test efficient linear list vs list random indices remove")
+            print("\n12: test efficient list vs list random indices remove")
             for i in range(size // 2):
                 delete_indexes[i] = random.randint(0, size - (i + 1))
             remove_from_efficient_linear_list(ell, size // 2)
@@ -230,7 +230,7 @@ def main():
 
         elif input_test == 12:
             print(
-                "\n13: test efficient linear list vs list half push_front then push_back the other half"
+                "\n13: test efficient list vs list half push_front then push_back the other half"
             )
             ell = EfficientList()
             lst = blist()
@@ -244,7 +244,7 @@ def main():
 
         elif input_test == 13:
             print(
-                "\n14: test efficient linear list vs list begin half pop_front then pop_back the other half"
+                "\n14: test efficient list vs list begin half pop_front then pop_back the other half"
             )
             for i in range(size // 4):
                 delete_indexes[i] = 0
@@ -256,7 +256,7 @@ def main():
 
         elif input_test == 14:
             print(
-                "\n15: test efficient linear list vs list half push_back then push_front the other half"
+                "\n15: test efficient list vs list half push_back then push_front the other half"
             )
             ell = EfficientList()
             lst = blist()
@@ -270,7 +270,7 @@ def main():
 
         elif input_test == 15:
             print(
-                "\n16: test efficient linear list vs list begin half pop_back then pop_front the other half"
+                "\n16: test efficient list vs list begin half pop_back then pop_front the other half"
             )
             for i in range(size // 4):
                 delete_indexes[i] = size - (i + 1)

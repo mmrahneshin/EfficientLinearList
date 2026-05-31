@@ -8,7 +8,7 @@
 
 #include "../src/IndexedPPS23RBBinaryTreeNode.h"
 #include "../src/IndexedPPS23RedBlackBinaryTree.h"
-#include "../src/EfficientLinearList.h"
+#include "../src/EfficientList.h"
 
 #include <iostream>
 
@@ -18,7 +18,7 @@ char inOrder[] = {'g', 'd', 'k', 'h', 'l', 'b', 'a', 'e', 'i', 'c', 'f'};
 char deleted[] = {'g', 'd', 'k', 'l', 'b', 'a', 'i', 'c'};
 char deletedIndexedList[] = {'g', 'd', 'k', 'l', 'b', 'i', 'c'};
 
-bool insertEfficientLinearListCheck(EfficientLinearList<char> *ill)
+bool insertEfficientListCheck(EfficientList<char> *ill)
 {
 	//                                                     a
 	//												/		      \
@@ -45,7 +45,7 @@ bool insertEfficientLinearListCheck(EfficientLinearList<char> *ill)
 	cout << endl;
 
 	bool result = true;
-	cout << "\n**efficient linear list :\nYours\tCorrect" << endl;
+	cout << "\n**efficient list :\nYours\tCorrect" << endl;
 
 	for (int i = 0; i < ill->size(); i++)
 	{
@@ -60,7 +60,7 @@ bool insertEfficientLinearListCheck(EfficientLinearList<char> *ill)
 	return result;
 }
 
-bool deleteEfficientLinearListCheck(EfficientLinearList<char> *ill)
+bool deleteEfficientListCheck(EfficientList<char> *ill)
 {
 	//                                                     a
 	//												/		      \
@@ -80,7 +80,7 @@ bool deleteEfficientLinearListCheck(EfficientLinearList<char> *ill)
 	cout << endl;
 
 	bool result = true;
-	cout << "\n**efficient linear list :\nYours\tCorrect" << endl;
+	cout << "\n**efficient list :\nYours\tCorrect" << endl;
 
 	for (int i = 0; i < ill->size(); i++)
 	{
@@ -99,7 +99,7 @@ int main()
 {
 	int input;
 	bool result = false;
-	EfficientLinearList<char> *ill = new EfficientLinearList<char>;
+	EfficientList<char> *ill = new EfficientList<char>;
 
 	for (input = 0; input < 2; input++)
 	{
@@ -107,13 +107,13 @@ int main()
 		{
 		case 0:
 			cout << endl
-				 << "1: test efficient linear list insert" << endl;
-			result = insertEfficientLinearListCheck(ill);
+				 << "1: test efficient list insert" << endl;
+			result = insertEfficientListCheck(ill);
 			break;
 		case 1:
 			cout << endl
-				 << "2: test efficient linear list remove" << endl;
-			result = deleteEfficientLinearListCheck(ill);
+				 << "2: test efficient list remove" << endl;
+			result = deleteEfficientListCheck(ill);
 			break;
 		}
 

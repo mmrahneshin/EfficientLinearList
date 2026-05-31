@@ -4,7 +4,7 @@ import os
 import glob
 
 # Set the path to your CSV files
-csv_path = "/home/sepehr/uni/DS/paper/EfficientLinearList/memoryResults/half_remove/"
+csv_path = "/home/sepehr/uni/DS/paper/EfficientList/memoryResults/half_remove/"
 
 # Define the test categories and their corresponding file patterns
 test_categories = [
@@ -46,7 +46,7 @@ def load_and_plot_comparison(test_name, title):
         plt.plot(
             ell_data["Size"],
             ell_data["Time"],
-            label="EfficientLinearList",
+            label="EfficientList",
             marker="o",
             linewidth=2,
             markersize=4,
@@ -67,7 +67,7 @@ def load_and_plot_comparison(test_name, title):
         plt.xlabel("Size", fontsize=12)
         plt.ylabel("Memory (KB)", fontsize=12)
         plt.title(
-            f"{title}\nEfficientLinearList vs Vector Performance",
+            f"{title}\nEfficientList vs Vector Performance",
             fontsize=14,
             fontweight="bold",
         )
@@ -164,7 +164,7 @@ def create_summary_plot():
 
 # Main execution
 if __name__ == "__main__":
-    print("Creating comparison plots for EfficientLinearList vs Vector...")
+    print("Creating comparison plots for EfficientList vs Vector...")
 
     # Create individual comparison plots
     for test_name, title in test_categories:

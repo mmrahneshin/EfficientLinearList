@@ -1,7 +1,7 @@
 
-public class EfficientLinearList<T> {
+public class EfficientList<T> {
 
-    public EfficientLinearList() {
+    public EfficientList() {
         mIPPS23RBbt = new IndexedPPS23RedBlackBinaryTree<T, IndexedPPS23RBBinaryTreeNode<T>>();
     }
 

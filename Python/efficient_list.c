@@ -1,9 +1,9 @@
 #include <Python.h>
 #include "efficient_list.h"
 
-EfficientLinearList *efficient_list_new(void)
+EfficientList *efficient_list_new(void)
 {
-    EfficientLinearList *el = (EfficientLinearList *)malloc(sizeof(EfficientLinearList));
+    EfficientList *el = (EfficientList *)malloc(sizeof(EfficientList));
     if (!el)
     {
         PyErr_NoMemory();
@@ -20,7 +20,7 @@ EfficientLinearList *efficient_list_new(void)
     return el;
 }
 
-void efficient_list_free(EfficientLinearList *el)
+void efficient_list_free(EfficientList *el)
 {
     ipps23rbbt_free(el->mIPPS23RBbt);
     free(el);
@@ -52,7 +52,7 @@ static inline IPPS23RBBTN *getNodeWithUpdateLeftSize(IPPRBBT *mIPPS23RBbt, Py_ss
     return node;
 }
 
-void efficient_list_insert(EfficientLinearList *el, Py_ssize_t idx, PyObject *data)
+void efficient_list_insert(EfficientList *el, Py_ssize_t idx, PyObject *data)
 {
     IPPRBBT *mIPPS23RBbt = el->mIPPS23RBbt;
     if (idx < 0 || idx > mIPPS23RBbt->mSize)
@@ -95,7 +95,7 @@ void efficient_list_insert(EfficientLinearList *el, Py_ssize_t idx, PyObject *da
     }
 }
 
-void efficient_list_remove(EfficientLinearList *el, Py_ssize_t idx)
+void efficient_list_remove(EfficientList *el, Py_ssize_t idx)
 {
     IPPRBBT *mIPPS23RBbt = el->mIPPS23RBbt;
     if (idx < 0 || idx >= mIPPS23RBbt->mSize)
@@ -120,7 +120,7 @@ void efficient_list_remove(EfficientLinearList *el, Py_ssize_t idx)
     ipps23rbbt_delete_node(mIPPS23RBbt, node);
 }
 
-PyObject *efficient_list_get_item(EfficientLinearList *el, Py_ssize_t idx)
+PyObject *efficient_list_get_item(EfficientList *el, Py_ssize_t idx)
 {
     IPPRBBT *mIPPS23RBbt = el->mIPPS23RBbt;
     if (idx < 0 || idx >= mIPPS23RBbt->mSize)
@@ -133,7 +133,7 @@ PyObject *efficient_list_get_item(EfficientLinearList *el, Py_ssize_t idx)
     return node->mData;
 }
 
-Py_ssize_t efficient_list_size(EfficientLinearList *el)
+Py_ssize_t efficient_list_size(EfficientList *el)
 {
     return el->mIPPS23RBbt->mSize;
 }

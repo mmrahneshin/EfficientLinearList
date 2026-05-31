@@ -4,7 +4,7 @@ import os
 import glob
 
 # Set the path to your CSV files
-csv_path = "/home/sepehr/uni/DS/paper/EfficientLinearList/timeTakenResults/half_remove/"
+csv_path = "/home/sepehr/uni/DS/paper/EfficientList/timeTakenResults/half_remove/"
 
 # Define the test categories and their corresponding file patterns
 test_categories = [
@@ -62,7 +62,7 @@ def load_and_plot_comparison_linear(test_name, title):
         plt.plot(
             ell_data["Size"],
             ell_data["Time"],
-            label="EfficientLinearList",
+            label="EfficientList",
             marker="o",
             linewidth=2,
             markersize=4,
@@ -83,7 +83,7 @@ def load_and_plot_comparison_linear(test_name, title):
         plt.xlabel("Size", fontsize=12)
         plt.ylabel("Time (seconds)", fontsize=12)
         plt.title(
-            f"{title}\nEfficientLinearList vs std::vector Performance (Linear Scale)",
+            f"{title}\nEfficientList vs std::vector Performance (Linear Scale)",
             fontsize=14,
             fontweight="bold",
         )
@@ -180,7 +180,7 @@ def create_summary_plot_linear():
 # Main execution
 if __name__ == "__main__":
     print(
-        "Creating comparison plots (Linear Scale) for EfficientLinearList vs Vector..."
+        "Creating comparison plots (Linear Scale) for EfficientList vs Vector..."
     )
 
     # Create individual comparison plots

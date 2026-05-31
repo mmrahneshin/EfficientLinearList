@@ -32,7 +32,7 @@ def merge_png_to_pdf(input_dir, output_pdf):
 # Example usage
 if __name__ == "__main__":
     # Specify the directory containing PNG files
-    input_dir = "/home/sepehr/uni/DS/paper/EfficientLinearList/doc/remove/"  # Replace with your folder path
+    input_dir = "/home/sepehr/uni/DS/paper/EfficientList/doc/remove/"  # Replace with your folder path
     output_pdf = "Remove_random_indices.pdf"  # Replace with desired output PDF path
 
     # Check if the input directory exists
