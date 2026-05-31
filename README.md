@@ -1,4 +1,4 @@
-# Efficient Linear List
+# Efficient List
 
 [![DOI](https://zenodo.org/badge/961046497.svg)](https://doi.org/10.5281/zenodo.20474959)
 
