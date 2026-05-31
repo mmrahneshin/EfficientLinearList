@@ -1,1 +1,0 @@
-# EfficientList_python

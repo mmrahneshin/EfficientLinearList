@@ -1,3 +1,4 @@
 c_test/build
 c_test/.vscode
-timeTakenResults
+timeTakenResults/plots
+timeTakenResults/plots_linear
