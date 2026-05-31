@@ -1,5 +1,7 @@
 # Efficient Linear List
 
+[![DOI](https://zenodo.org/badge/961046497.svg)](https://doi.org/10.5281/zenodo.20474959)
+
 This repository contains the source code for the "Efficient Linear List" data structure as detailed in our paper. 
 
 Traditionally, arrays provide $O(1)$ random access but perform poorly ($O(n)$) on arbitrary insertions and deletions. Linked lists, on the other hand, support $O(1)$ insertion and deletion but incur $O(n)$ random-access time. The **Efficient Linear List** uses a practical implementation of the Order-Statistic Tree (OST) backed by Parity-Seeking 2-3 Red-Black Trees (PSRBT) to address this trade-off.
