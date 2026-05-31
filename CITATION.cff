@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Rahneshin"
+    given-names: "Mohammad Mahdi"
+title: "Efficient Linear List"
+version: 1.0.0
+date-released: 2026-05-31
+url: "https://github.com/mmrahneshin/EfficientLinearList"
